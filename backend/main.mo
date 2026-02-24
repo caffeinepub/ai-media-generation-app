@@ -6,7 +6,9 @@ import Principal "mo:core/Principal";
 import Text "mo:core/Text";
 import Stripe "stripe/stripe";
 import OutCall "http-outcalls/outcall";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   // Authorization
   let accessControlState = AccessControl.initState();
@@ -40,34 +42,9 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Credit System
-  let creditBalances = Map.empty<Principal, Nat>();
+  // Generations
   let generations = Map.empty<Principal, Nat>();
   let galleries = Map.empty<Principal, [Text]>();
-
-  let GENERATION_COST : Nat = 500;
-
-  public query ({ caller }) func getCredits() : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can check credits");
-    };
-    getCreditBalance(caller);
-  };
-
-  func getCreditBalance(user : Principal) : Nat {
-    switch (creditBalances.get(user)) {
-      case (null) { 0 };
-      case (?balance) { balance };
-    };
-  };
-
-  func debitCredits(user : Principal, amount : Nat) {
-    let balance = getCreditBalance(user);
-    if (balance < amount) {
-      Runtime.trap("Insufficient credits");
-    };
-    creditBalances.add(user, balance - amount);
-  };
 
   func incrementGenerations(user : Principal) {
     let current = switch (generations.get(user)) {
@@ -82,7 +59,6 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can generate images");
     };
-    debitCredits(caller, GENERATION_COST);
     incrementGenerations(caller);
     let result = await OutCall.httpGetRequest(prompt, [], transform);
     saveToGallery(caller, result);
@@ -93,7 +69,6 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can generate videos");
     };
-    debitCredits(caller, GENERATION_COST);
     incrementGenerations(caller);
     let result = await OutCall.httpGetRequest(prompt, [], transform);
     saveToGallery(caller, result);
@@ -128,7 +103,7 @@ actor {
 
   public shared ({ caller }) func setStripeConfiguration(config : Stripe.StripeConfiguration) : async () {
     if (not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only admins can set Stripe configuration");
+      Runtime.trap("Unauthorized: Only admin can access this function");
     };
     configuration := ?config;
   };
@@ -160,21 +135,18 @@ actor {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admin can access this function");
     };
-    creditBalances.entries().toArray();
+    [];
   };
 
-  public shared ({ caller }) func adjustUserCredits(user : Principal, amount : Nat) : async () {
+  public shared ({ caller }) func adjustUserCredits(_user : Principal, _amount : Nat) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admin can access this function");
     };
-    creditBalances.add(user, amount);
   };
 
-  public shared ({ caller }) func addUserCredits(amount : Nat) : async () {
+  public shared ({ caller }) func addUserCredits(_amount : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can perform this action");
+      Runtime.trap("Unauthorized: Only users can access this function");
     };
-    let balance = getCreditBalance(caller);
-    creditBalances.add(caller, balance + amount);
   };
 };

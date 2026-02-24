@@ -57,8 +57,8 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addUserCredits(amount: bigint): Promise<void>;
-    adjustUserCredits(user: Principal, amount: bigint): Promise<void>;
+    addUserCredits(_amount: bigint): Promise<void>;
+    adjustUserCredits(_user: Principal, _amount: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
     generateImage(prompt: string): Promise<string>;
@@ -66,7 +66,6 @@ export interface backendInterface {
     getAllUsers(): Promise<Array<[Principal, bigint]>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getCredits(): Promise<bigint>;
     getGallery(): Promise<Array<string>>;
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;

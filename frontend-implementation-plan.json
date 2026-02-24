@@ -1,254 +1,26 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "AI Media Studio - Frontend Implementation",
+  "title": "Remove frontend credit restrictions and gating logic",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Implement Internet Identity authentication with login/logout flows and protected route guards",
+      "id": "REQ-13",
+      "summary": "Remove all credit-gate checks on the frontend. The Generate button must always be enabled regardless of the displayed credit balance. No low-credits warning, disabled state, or credit-threshold logic should appear anywhere in the UI.",
       "acceptanceCriteria": [
-        "Login button visible on landing page for unauthenticated users",
-        "After authentication, user principal is stored and used to scope data",
-        "Logout clears session and redirects to landing page",
-        "Protected routes redirect unauthenticated users to login"
+        "The Generate button is always enabled on the generation page, irrespective of the credit balance value.",
+        "No warning, tooltip, or message about insufficient credits is rendered anywhere in the app.",
+        "Credit balance may still be displayed for informational purposes but does not gate any action."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "create",
-          "description": "Create login/logout button component using the authorization component. Use useInternetIdentity hook to handle authentication state (identity, loginStatus). On logout, clear queryClient and redirect. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/ProtectedRoute.tsx",
-          "operation": "create",
-          "description": "Create protected route wrapper component that checks authentication status using useInternetIdentity. Redirect unauthenticated users to landing page. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetupModal.tsx",
-          "operation": "create",
-          "description": "Create modal component for first-time user profile setup using the authorization component. Use useGetCallerUserProfile hook with proper loading state handling to prevent flash. Prompt for user name when userProfile is null. Call saveCallerUserProfile mutation. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useGetCallerUserProfile.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to fetch caller user profile via getCallerUserProfile backend method. Handle actor dependency properly to prevent modal flash (return isLoading: actorFetching || query.isLoading, isFetched: !!actor && query.isFetched). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useSaveCallerUserProfile.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to save caller user profile via saveCallerUserProfile backend method. Invalidate currentUserProfile query on success. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
+          "path": "frontend/src/pages/GeneratePage.tsx",
           "operation": "modify",
-          "description": "Wire LoginButton into the app layout header. Show ProfileSetupModal when showProfileSetup condition is met (isAuthenticated && !profileLoading && isFetched && userProfile === null). Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Build personal gallery page to display all user-generated media with prompts, types, and timestamps",
-      "acceptanceCriteria": [
-        "Gallery page is accessible only to authenticated users",
-        "Displays all generated images and videos for the logged-in user",
-        "Each card shows media preview, prompt text, type badge, and timestamp",
-        "Gallery updates after each successful generation"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/routes/gallery.tsx",
-          "operation": "create",
-          "description": "Create gallery route wrapped in ProtectedRoute. Fetch gallery items via useGetGallery hook. Display grid of media cards with preview (image/video element), prompt text, type badge (Image/Video), and timestamp. Apply dark ultra-modern styling with glassmorphism cards."
-        },
-        {
-          "path": "frontend/src/hooks/useGetGallery.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to fetch gallery via getGallery backend method. Return array of gallery items. Enable only when actor is available."
-        },
-        {
-          "path": "frontend/src/components/GalleryCard.tsx",
-          "operation": "create",
-          "description": "Create gallery card component to display individual media item. Render image or video element based on type, prompt text, type badge, and formatted timestamp. Apply glassmorphism styling with subtle glow effects."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
-          "operation": "modify",
-          "description": "Add navigation link to Gallery page in the app header for authenticated users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Build admin panel for user management with credit balance adjustments restricted to admin principal",
-      "acceptanceCriteria": [
-        "Admin panel route is restricted to the designated admin principal",
-        "Displays a table of all registered users with credit balance and generation count",
-        "Admin can increment or set a user's credit balance",
-        "Non-admin users receive an access-denied response if they attempt to access admin endpoints"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/routes/admin.tsx",
-          "operation": "create",
-          "description": "Create admin route wrapped in ProtectedRoute with admin role check using the authorization component. Use isCallerAdmin backend method via useIsCallerAdmin hook. Show AccessDeniedScreen if not admin. Display user table via useGetAllUsers hook showing principal, credits, generation count. Provide credit adjustment form using useAdjustUserCredits mutation. Integrate StripeConfigSetup component. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useIsCallerAdmin.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to check admin status via isCallerAdmin backend method. Enable only when actor is available. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useGetAllUsers.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to fetch all users via getAllUsers backend method. Return array of [Principal, bigint] tuples. Enable only when actor is available and user is admin."
-        },
-        {
-          "path": "frontend/src/hooks/useAdjustUserCredits.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to adjust user credits via adjustUserCredits backend method. Accept user Principal and amount bigint. Invalidate allUsers query on success."
-        },
-        {
-          "path": "frontend/src/components/AccessDeniedScreen.tsx",
-          "operation": "create",
-          "description": "Create access denied screen component for unauthorized users using the authorization component. Display message with dark ultra-modern styling. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
-          "operation": "modify",
-          "description": "Add navigation link to Admin panel in the app header for authenticated admin users only (check useIsCallerAdmin)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Integrate Stripe payments for credit bundle purchases with package options and balance updates",
-      "acceptanceCriteria": [
-        "Credits purchase page shows at least three bundle options with prices",
-        "Stripe payment flow is initiated from the frontend",
-        "On successful payment, backend credit balance is updated for the authenticated user",
-        "User sees updated credit balance immediately after purchase"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/routes/credits.tsx",
-          "operation": "create",
-          "description": "Create credits purchase route wrapped in ProtectedRoute using the stripe component. Display three bundle options (1000, 5000, 10000 credits) with prices. Use useCreateCheckoutSession hook to initiate payment. Redirect to session.url via window.location.href (never router navigation, never navigate to /undefined). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useCreateCheckoutSession.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to create Stripe checkout session using the stripe component. Call createCheckoutSession backend method with ShoppingItem array, successUrl, cancelUrl. Parse JSON result as CheckoutSession. Validate session.url is non-empty before returning. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/routes/payment-success.tsx",
-          "operation": "create",
-          "description": "Create payment success route using the stripe component. Display success message with link to gallery or generation page. Invalidate credits query to refresh balance. Apply dark ultra-modern styling. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/routes/payment-failure.tsx",
-          "operation": "create",
-          "description": "Create payment failure route using the stripe component. Display failure message with retry link to credits page. Apply dark ultra-modern styling. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/StripeConfigSetup.tsx",
-          "operation": "create",
-          "description": "Create Stripe configuration setup component for admin using the stripe component. Check isStripeConfigured via useIsStripeConfigured hook. If not configured, show form for secretKey and allowedCountries array. Call setStripeConfiguration via useSetStripeConfiguration mutation. Do not show if already configured. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useIsStripeConfigured.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to check Stripe configuration via isStripeConfigured backend method using the stripe component. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useSetStripeConfiguration.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to set Stripe configuration via setStripeConfiguration backend method using the stripe component. Invalidate isStripeConfigured query on success. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
-          "operation": "modify",
-          "description": "Add navigation link to Credits page in the app header for authenticated users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Build generation page with Image and Video tabs, prompt inputs, status indicators, and credit balance display",
-      "acceptanceCriteria": [
-        "Image tab and Video tab are both present on the generation page",
-        "Current credit balance is displayed and refreshes after generation",
-        "Generate button is disabled when credit balance < 500",
-        "Status indicator updates through idle → processing → complete/error states",
-        "Generated image or video is rendered inline after successful generation"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/routes/generate.tsx",
-          "operation": "create",
-          "description": "Create generation route wrapped in ProtectedRoute. Implement tabs for Image and Video generation. Display credit balance via useGetCredits hook prominently. Each tab has prompt input, Generate button (disabled if credits < 500), status indicator (idle/processing/complete/error), and result rendering area. Use useGenerateImage and useGenerateVideo mutations. Apply dark ultra-modern styling with glassmorphism."
-        },
-        {
-          "path": "frontend/src/hooks/useGetCredits.ts",
-          "operation": "create",
-          "description": "Create hook using useQuery to fetch user credits via getCredits backend method. Return bigint balance. Enable only when actor is available. Refetch after generation mutations."
-        },
-        {
-          "path": "frontend/src/hooks/useGenerateImage.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to generate image via generateImage backend method. Accept prompt string, return image URL string. Handle errors gracefully. Invalidate credits and gallery queries on success."
-        },
-        {
-          "path": "frontend/src/hooks/useGenerateVideo.ts",
-          "operation": "create",
-          "description": "Create hook using useMutation to generate video via generateVideo backend method. Accept prompt string, return video URL string. Handle errors gracefully. Invalidate credits and gallery queries on success."
+          "description": "Remove the low-credits warning UI that conditionally renders based on credit balance. Remove any credit-threshold checks (e.g., credits < 10) and the associated warning banner. Keep the credit balance display for informational purposes only."
         },
         {
           "path": "frontend/src/components/GenerationTab.tsx",
-          "operation": "create",
-          "description": "Create reusable generation tab component accepting mediaType prop (image/video). Contains prompt textarea, Generate button with loading state, status indicator, and result display (img or video element). Apply dark ultra-modern styling with neon glow effects."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
           "operation": "modify",
-          "description": "Add navigation link to Generate page in the app header for authenticated users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Apply dark ultra-modern visual theme with near-black background, high-contrast accents, and consistent design language",
-      "acceptanceCriteria": [
-        "All pages use a dark background (near-black)",
-        "Accent colors are consistently applied and are not blue or purple",
-        "Cards and interactive elements use glassmorphism or subtle glow effects",
-        "Typography is sharp, modern, and consistent across all views",
-        "Design is responsive and visually coherent across generation, gallery, and admin pages"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update global styles with dark ultra-modern theme. Set near-black background (#0a0a0a or similar), high-contrast accent colors (avoid blue/purple - use cyan, emerald, amber, or red tones), sharp modern typography (Inter, Space Grotesk, or similar), and glassmorphism/glow utility classes. Define CSS variables for consistent theming."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Extend Tailwind config with custom dark theme colors matching the design requirements. Add accent colors (not blue/purple), near-black background shades, glassmorphism utilities (backdrop-blur, bg-opacity), and glow effect utilities (box-shadow, border-glow). Configure responsive breakpoints."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create layout component applying dark ultra-modern theme consistently. Include header with navigation links, logo area (wire generated app-logo.dim_256x256.png from frontend/public/assets/generated/app-logo.dim_256x256.png), LoginButton, and main content area. Apply glassmorphism to header, consistent spacing, and responsive design."
-        },
-        {
-          "path": "frontend/src/routes/__root.tsx",
-          "operation": "modify",
-          "description": "Wrap all routes in Layout component to ensure consistent dark ultra-modern theme across all pages."
-        },
-        {
-          "path": "frontend/src/routes/index.tsx",
-          "operation": "create",
-          "description": "Create landing page with dark ultra-modern hero section. Wire generated hero-banner.dim_1200x400.png from frontend/public/assets/generated/hero-banner.dim_1200x400.png as hero background. Include value proposition, feature highlights, and prominent login CTA for unauthenticated users. Apply glassmorphism cards and neon glow effects. For authenticated users, show quick navigation to Generate/Gallery."
+          "description": "Remove any disabled state or credit-gating logic from the Generate button. Ensure the button is always enabled and clickable regardless of the credit balance. Remove any credit balance checks (e.g., credits < 5) that previously controlled the button's disabled state."
         }
       ]
     }

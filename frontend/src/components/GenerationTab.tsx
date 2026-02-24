@@ -11,12 +11,9 @@ type Status = 'idle' | 'processing' | 'complete' | 'error';
 
 interface GenerationTabProps {
   mediaType: MediaType;
-  credits: bigint | undefined;
 }
 
-const GENERATION_COST = 500;
-
-export default function GenerationTab({ mediaType, credits }: GenerationTabProps) {
+export default function GenerationTab({ mediaType }: GenerationTabProps) {
   const [prompt, setPrompt] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [resultUrl, setResultUrl] = useState<string | null>(null);
@@ -27,11 +24,10 @@ export default function GenerationTab({ mediaType, credits }: GenerationTabProps
 
   const isImage = mediaType === 'image';
   const mutation = isImage ? generateImage : generateVideo;
-  const hasEnoughCredits = credits !== undefined && credits >= BigInt(GENERATION_COST);
   const isProcessing = status === 'processing';
 
   const handleGenerate = async () => {
-    if (!prompt.trim() || !hasEnoughCredits) return;
+    if (!prompt.trim()) return;
 
     setStatus('processing');
     setResultUrl(null);
@@ -103,20 +99,10 @@ export default function GenerationTab({ mediaType, credits }: GenerationTabProps
         </div>
       </div>
 
-      {/* Credits Warning */}
-      {!hasEnoughCredits && credits !== undefined && (
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm">
-          <AlertCircle size={16} className="text-destructive flex-shrink-0" />
-          <span className="text-destructive">
-            Insufficient credits. You need {GENERATION_COST} credits but have {credits.toString()}.
-          </span>
-        </div>
-      )}
-
       {/* Generate Button */}
       <Button
         onClick={handleGenerate}
-        disabled={!prompt.trim() || !hasEnoughCredits || isProcessing}
+        disabled={!prompt.trim() || isProcessing}
         className="w-full btn-primary h-12 text-base font-semibold"
       >
         {isProcessing ? (
@@ -128,7 +114,6 @@ export default function GenerationTab({ mediaType, credits }: GenerationTabProps
           <span className="flex items-center gap-3">
             <Zap size={18} />
             Generate {isImage ? 'Image' : 'Video'}
-            <span className="text-xs opacity-70 font-mono">({GENERATION_COST} credits)</span>
           </span>
         )}
       </Button>

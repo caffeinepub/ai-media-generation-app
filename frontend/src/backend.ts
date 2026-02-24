@@ -140,8 +140,8 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    addUserCredits(amount: bigint): Promise<void>;
-    adjustUserCredits(user: Principal, amount: bigint): Promise<void>;
+    addUserCredits(_amount: bigint): Promise<void>;
+    adjustUserCredits(_user: Principal, _amount: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
     generateImage(prompt: string): Promise<string>;
@@ -149,7 +149,6 @@ export interface backendInterface {
     getAllUsers(): Promise<Array<[Principal, bigint]>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getCredits(): Promise<bigint>;
     getGallery(): Promise<Array<string>>;
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
@@ -300,20 +299,6 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getCallerUserRole();
             return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getCredits(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getCredits();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getCredits();
-            return result;
         }
     }
     async getGallery(): Promise<Array<string>> {

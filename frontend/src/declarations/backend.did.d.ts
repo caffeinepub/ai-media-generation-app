@@ -58,7 +58,6 @@ export interface _SERVICE {
   'getAllUsers' : ActorMethod<[], Array<[Principal, bigint]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getCredits' : ActorMethod<[], bigint>,
   'getGallery' : ActorMethod<[], Array<string>>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,

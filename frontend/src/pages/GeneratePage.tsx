@@ -2,16 +2,10 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import GenerationTab from '../components/GenerationTab';
 import { useGetCredits } from '../hooks/useQueries';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Zap, Image, Video, AlertTriangle } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
-
-const GENERATION_COST = 500;
+import { Zap, Image, Video } from 'lucide-react';
 
 function GenerateContent() {
   const { data: credits, isLoading: creditsLoading } = useGetCredits();
-  const navigate = useNavigate();
-
-  const hasEnoughCredits = credits !== undefined && credits >= BigInt(GENERATION_COST);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -22,40 +16,23 @@ function GenerateContent() {
       </div>
 
       {/* Credit Balance Card */}
-      <div className={`glass-card rounded-xl p-4 mb-6 flex items-center justify-between ${hasEnoughCredits ? 'border-primary/20' : 'border-destructive/30'}`}>
+      <div className="glass-card rounded-xl p-4 mb-6 flex items-center justify-between border-primary/20">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${hasEnoughCredits ? 'bg-primary/10' : 'bg-destructive/10'}`}>
-            <Zap size={18} className={hasEnoughCredits ? 'text-primary' : 'text-destructive'} />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-primary/10">
+            <Zap size={18} className="text-primary" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Credit Balance</p>
-            <p className={`text-xl font-bold font-mono ${hasEnoughCredits ? 'text-primary' : 'text-destructive'}`}>
+            <p className="text-xl font-bold font-mono text-primary">
               {creditsLoading ? '...' : credits?.toString() ?? '0'}
             </p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">Cost per generation</p>
-          <p className="text-sm font-semibold font-mono text-foreground">{GENERATION_COST} credits</p>
+          <p className="text-xs text-muted-foreground">Unlimited generations</p>
+          <p className="text-sm font-semibold font-mono text-foreground">∞</p>
         </div>
       </div>
-
-      {/* Low credits warning */}
-      {!creditsLoading && !hasEnoughCredits && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-subtle border border-amber-glow/20 mb-6">
-          <AlertTriangle size={18} className="text-amber-glow flex-shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">Not enough credits</p>
-            <p className="text-xs text-muted-foreground">You need at least {GENERATION_COST} credits to generate media.</p>
-          </div>
-          <button
-            onClick={() => navigate({ to: '/credits' })}
-            className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors whitespace-nowrap"
-          >
-            Buy Credits →
-          </button>
-        </div>
-      )}
 
       {/* Generation Tabs */}
       <div className="glass-card rounded-2xl p-6">
@@ -78,11 +55,11 @@ function GenerateContent() {
           </TabsList>
 
           <TabsContent value="image">
-            <GenerationTab mediaType="image" credits={credits} />
+            <GenerationTab mediaType="image" />
           </TabsContent>
 
           <TabsContent value="video">
-            <GenerationTab mediaType="video" credits={credits} />
+            <GenerationTab mediaType="video" />
           </TabsContent>
         </Tabs>
       </div>

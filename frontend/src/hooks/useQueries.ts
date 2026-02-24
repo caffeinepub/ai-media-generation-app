@@ -42,17 +42,12 @@ export function useSaveCallerUserProfile() {
 
 // ─── Credits ─────────────────────────────────────────────────────────────────
 
+// Credits are limitless — return a static placeholder without a backend call.
 export function useGetCredits() {
-  const { actor, isFetching } = useActor();
-
   return useQuery<bigint>({
     queryKey: ['credits'],
-    queryFn: async () => {
-      if (!actor) return BigInt(0);
-      return actor.getCredits();
-    },
-    enabled: !!actor && !isFetching,
-    refetchInterval: 30000,
+    queryFn: async () => BigInt(0),
+    staleTime: Infinity,
   });
 }
 
@@ -68,7 +63,6 @@ export function useGenerateImage() {
       return actor.generateImage(prompt);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['credits'] });
       queryClient.invalidateQueries({ queryKey: ['gallery'] });
     },
   });
@@ -84,7 +78,6 @@ export function useGenerateVideo() {
       return actor.generateVideo(prompt);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['credits'] });
       queryClient.invalidateQueries({ queryKey: ['gallery'] });
     },
   });
