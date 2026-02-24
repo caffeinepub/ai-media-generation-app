@@ -1,55 +1,146 @@
 {
   "kind": "build_request",
-  "title": "Make credits limitless — remove all credit restrictions",
-  "priority": "normal",
+  "title": "Fix media generation failures — robust error handling, retry logic, and Replicate API integration hardening",
+  "projectName": "AI Media Studio",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-12",
-      "text": "Remove all credit deduction logic from the backend. When a user generates an image or video, do not decrement their credit balance. Generation must never be blocked or rejected due to insufficient credits.",
+      "id": "REQ-14",
+      "text": "Audit and harden the backend Replicate API HTTP outcall for image generation: ensure the API key is read from a stable config store, the request payload matches Replicate's current REST schema (POST /v1/predictions with correct model version, input fields, and Content-Type: application/json), the IC HTTP outcall transform function is correctly stripping non-deterministic headers, and the response body is fully parsed before storing the result URL. Return a structured error variant (#ApiKeyMissing, #ApiError(text), #Timeout, #ParseError) instead of a generic trap so the frontend can display a meaningful message.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-6"
         ],
         "quotes": [
-          "Make the credits limitless"
+          "It failed with a 'generating' / 'generation error' state",
+          "Identify the top 3 likely root causes",
+          "Provide exact code/config changes to fix each cause"
         ]
       },
       "acceptanceCriteria": [
-        "Calling the image generation endpoint does not reduce the caller's credit balance.",
-        "Calling the video generation endpoint does not reduce the caller's credit balance.",
-        "Generation is never rejected with an insufficient-credits error.",
-        "Admin credit-adjustment functionality remains intact."
+        "If the Replicate API key is not configured, the backend returns #ApiKeyMissing and the frontend shows 'API key not configured'.",
+        "If Replicate returns a non-2xx HTTP status, the backend captures the status code and body and returns #ApiError(text).",
+        "The IC HTTP outcall transform function strips Date, Set-Cookie, and other non-deterministic headers so consensus is not blocked.",
+        "A successful prediction response is parsed and the resulting media URL is stored in the user's gallery entry before returning to the frontend.",
+        "No unhandled traps occur during generation; all error paths return typed variants."
       ]
     },
     {
-      "id": "REQ-13",
-      "text": "Remove all credit-gate checks on the frontend. The Generate button must always be enabled regardless of the displayed credit balance. No low-credits warning, disabled state, or credit-threshold logic should appear anywhere in the UI.",
-      "target": "frontend",
+      "id": "REQ-15",
+      "text": "Audit and harden the backend Replicate API HTTP outcall for video generation using the same approach as REQ-14: correct payload schema, deterministic transform, typed error variants, and gallery storage before returning.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-6"
         ],
         "quotes": [
-          "Make the credits limitless"
+          "I attempted to generate media (image/video) from the website",
+          "500/502/504 → provider-side or function timeout (increase timeout/retry)"
         ]
       },
       "acceptanceCriteria": [
-        "The Generate button is always enabled on the generation page, irrespective of the credit balance value.",
-        "No warning, tooltip, or message about insufficient credits is rendered anywhere in the app.",
-        "Credit balance may still be displayed for informational purposes but does not gate any action."
+        "Video generation returns #ApiKeyMissing, #ApiError(text), #Timeout, or #ParseError on failure instead of trapping.",
+        "On success the video URL is persisted to the gallery and returned to the caller.",
+        "The HTTP outcall transform strips non-deterministic headers."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Add a Replicate API key configuration endpoint to the backend admin interface. The admin must be able to set (and update) the Replicate API key via a dedicated admin-only backend function (setReplicateApiKey). The key must be stored in stable memory so it survives canister upgrades. A companion query (hasReplicateApiKey: Bool) must allow the frontend to check whether the key is configured.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Check provider/API key & quotas",
+          "Is the API key valid and not expired/revoked?"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Only the designated admin principal can call setReplicateApiKey; all other callers receive #Unauthorized.",
+        "The stored key survives a canister upgrade (stored in stable var).",
+        "hasReplicateApiKey returns true after a key is set and false before any key is stored.",
+        "The key value is never returned in any query response — only its presence is exposed."
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Update the Admin page to include a Replicate API Key configuration section. Display the current key status (configured / not configured) via hasReplicateApiKey, provide a password-type text input and a Save button that calls setReplicateApiKey, and show a success or error toast on completion. If the key is not configured, display a prominent warning banner on the Admin page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Check provider/API key & quotas",
+          "Is the API key valid and not expired/revoked?"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin page shows 'Replicate API Key: Configured ✓' or 'Not Configured ✗' based on hasReplicateApiKey.",
+        "A password input and Save button allow the admin to set or rotate the key.",
+        "On save success a success toast appears; on error an error toast appears.",
+        "If key is not configured, a warning banner is shown at the top of the Admin page."
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Implement client-side exponential backoff retry logic in the GenerationTab component. After a generation error, display a 'Retry' button that re-submits the same prompt up to 3 times with delays of 2s, 4s, and 8s between attempts. Show the current attempt number (e.g., 'Retrying… attempt 2/3') during retries. Use a stable idempotency key (derived from prompt + timestamp) stored in component state so the same request is not double-processed.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Provide a safe retry strategy (exponential backoff, idempotency keys)",
+          "Client UX — Show progress + friendly retry button; store job-id and status endpoint"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After a generation error a 'Retry' button appears alongside the error message.",
+        "Clicking Retry automatically re-submits the prompt up to 3 additional times.",
+        "The status indicator shows 'Retrying… attempt N/3' during retry attempts.",
+        "The idempotency key is fixed for the duration of the retry sequence and reset when the user types a new prompt.",
+        "After 3 failed retries the status shows a final error message and the Retry button is replaced with a 'Start over' option."
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Improve the generation error UX on the GenerationTab component. When a typed error variant is returned from the backend (#ApiKeyMissing, #ApiError, #Timeout, #ParseError), display a specific, human-readable error message corresponding to the error type rather than a generic 'Generation error'. Map each variant to a distinct user-facing string (e.g., 'Service not configured — contact admin', 'Provider error — please retry', 'Request timed out — please retry', 'Unexpected response — please retry').",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "observed client message: what the user sees",
+          "error_message (normalized)",
+          "fix_action (one-line actionable fix)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "#ApiKeyMissing displays: 'Service not configured — please contact the admin.'",
+        "#ApiError displays: 'Provider returned an error — please retry.'",
+        "#Timeout displays: 'Request timed out — please try again.'",
+        "#ParseError displays: 'Unexpected response from provider — please retry.'",
+        "No error case shows the raw internal error string to the user."
       ]
     }
   ],
   "constraints": [
-    "Do not remove the credit balance display — only remove gating/blocking logic.",
-    "Admin panel credit management (manual adjustments) must remain functional.",
-    "Stripe payment flows must remain intact."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "All Motoko logic must remain in the single actor file backend/main.mo.",
+    "The Replicate API key must never be exposed in any query response or frontend bundle.",
+    "Do not re-introduce any credit-gating logic on the frontend or backend."
   ],
   "nonGoals": [
-    "Removing the credit balance display from the UI.",
-    "Removing the Stripe purchase flow.",
-    "Changing any other backend logic unrelated to credit deduction."
+    "Switching from the Replicate API to any other media generation provider.",
+    "Adding WebSocket or real-time polling for generation job status.",
+    "Changing the Stripe payments integration.",
+    "Modifying the Internet Identity authentication flow.",
+    "Adding new pages or routes beyond Admin page updates."
   ],
   "imageRequirements": {
     "required": [],

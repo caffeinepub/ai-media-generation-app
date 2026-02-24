@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, ShoppingItem, StripeConfiguration } from '../backend';
+import type { UserProfile, ShoppingItem, StripeConfiguration, ReplicateError } from '../backend';
 import { Principal } from '@dfinity/principal';
 
 // ─── User Profile ────────────────────────────────────────────────────────────
@@ -58,12 +58,16 @@ export function useGenerateImage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (prompt: string): Promise<string> => {
+    mutationFn: async (prompt: string): Promise<ReplicateError> => {
       if (!actor) throw new Error('Actor not available');
-      return actor.generateImage(prompt);
+      const result = await actor.generateImage(prompt);
+      return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['gallery'] });
+    onSuccess: (result) => {
+      // Only invalidate gallery on non-error results
+      if (result.__kind__ !== 'ApiKeyMissing' && result.__kind__ !== 'Timeout' && result.__kind__ !== 'ParseError') {
+        queryClient.invalidateQueries({ queryKey: ['gallery'] });
+      }
     },
   });
 }
@@ -73,12 +77,16 @@ export function useGenerateVideo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (prompt: string): Promise<string> => {
+    mutationFn: async (prompt: string): Promise<ReplicateError> => {
       if (!actor) throw new Error('Actor not available');
-      return actor.generateVideo(prompt);
+      const result = await actor.generateVideo(prompt);
+      return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['gallery'] });
+    onSuccess: (result) => {
+      // Only invalidate gallery on non-error results
+      if (result.__kind__ !== 'ApiKeyMissing' && result.__kind__ !== 'Timeout' && result.__kind__ !== 'ParseError') {
+        queryClient.invalidateQueries({ queryKey: ['gallery'] });
+      }
     },
   });
 }
@@ -138,6 +146,36 @@ export function useAdjustUserCredits() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+    },
+  });
+}
+
+// ─── Replicate ───────────────────────────────────────────────────────────────
+
+export function useHasReplicateApiKey() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['hasReplicateApiKey'],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.hasReplicateApiKey();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSetReplicateApiKey() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (apiKey: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.setReplicateApiKey(apiKey);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hasReplicateApiKey'] });
     },
   });
 }

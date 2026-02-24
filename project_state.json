@@ -1,13 +1,15 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "Full-stack AI media generation app on the Internet Computer that creates images and videos using the Replicate API. Features a dark ultra-modern UI, unlimited credits (no credit cost per generation), personal gallery, admin panel, Stripe payments, and Internet Identity login.",
   "architectural_notes": [
     "Runs on the Internet Computer (ICP) platform",
     "Uses Replicate API for all AI media generation (images and videos)"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Media generation (image/video) fails with 'generation error' state in production — root cause under investigation (Replicate API key, timeouts, payload issues)"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-internet-identity-authentication-so-users-can-securely-log-in-and-log-out-all-protected-features-generation-gallery-credits-must-require-authentication",
@@ -70,6 +72,30 @@
       "title": "Remove all credit-gate checks on the frontend. The Generate button must always be enabled regardless of the displayed credit balance. No low-credits warning, disabled state, or credit-threshold logic should appear anywhere in the UI.",
       "reqIds": [
         "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-page-to-include-a-replicate-api-key-configuration-section-display-the-current-key-status-configured-not-configured-via-hasreplicateapikey-provide-a-password-type-text-input-and-a-save-button-that-calls-setreplicateapikey-and-show-a-success-or-error-toast-on-completion-if-the-key-is-not-configured-display-a-prominent-warning-banner-on-the-admin-page",
+      "title": "Update the Admin page to include a Replicate API Key configuration section. Display the current key status (configured / not configured) via hasReplicateApiKey, provide a password-type text input and a Save button that calls setReplicateApiKey, and show a success or error toast on completion. If the key is not configured, display a prominent warning banner on the Admin page.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-client-side-exponential-backoff-retry-logic-in-the-generationtab-component-after-a-generation-error-display-a-retry-button-that-re-submits-the-same-prompt-up-to-3-times-with-delays-of-2s-4s-and-8s-between-attempts-show-the-current-attempt-number-e-g-retrying-attempt-2-3-during-retries-use-a-stable-idempotency-key-derived-from-prompt-timestamp-stored-in-component-state-so-the-same-request-is-not-double-processed",
+      "title": "Implement client-side exponential backoff retry logic in the GenerationTab component. After a generation error, display a 'Retry' button that re-submits the same prompt up to 3 times with delays of 2s, 4s, and 8s between attempts. Show the current attempt number (e.g., 'Retrying… attempt 2/3') during retries. Use a stable idempotency key (derived from prompt + timestamp) stored in component state so the same request is not double-processed.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-generation-error-ux-on-the-generationtab-component-when-a-typed-error-variant-is-returned-from-the-backend-apikeymissing-apierror-timeout-parseerror-display-a-specific-human-readable-error-message-corresponding-to-the-error-type-rather-than-a-generic-generation-error-map-each-variant-to-a-distinct-user-facing-string-e-g-service-not-configured-contact-admin-provider-error-please-retry-request-timed-out-please-retry-unexpected-response-please-retry",
+      "title": "Improve the generation error UX on the GenerationTab component. When a typed error variant is returned from the backend (#ApiKeyMissing, #ApiError, #Timeout, #ParseError), display a specific, human-readable error message corresponding to the error type rather than a generic 'Generation error'. Map each variant to a distinct user-facing string (e.g., 'Service not configured — contact admin', 'Provider error — please retry', 'Request timed out — please retry', 'Unexpected response — please retry').",
+      "reqIds": [
+        "REQ-19"
       ],
       "version": 1
     }
@@ -152,6 +178,30 @@
       "summary": "Remove all credit deduction logic from the backend. When a user generates an image or video, do not decrement their credit balance. Generation must never be blocked or rejected due to insufficient credits.",
       "reqIds": [
         "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Audit and harden the backend Replicate API HTTP outcall for image generation: ensure the API key is read from a stable config store, the request payload matches Replicate's current REST schema (POST /v1/predictions with correct model version, input fields, and Content-Type: application/json), the IC HTTP outcall transform function is correctly stripping non-deterministic headers, and the response body is fully parsed before storing the result URL. Return a structured error variant (#ApiKeyMissing, #ApiError(text), #Timeout, #ParseError) instead of a generic trap so the frontend can display a meaningful message.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Audit and harden the backend Replicate API HTTP outcall for video generation using the same approach as REQ-14: correct payload schema, deterministic transform, typed error variants, and gallery storage before returning.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add a Replicate API key configuration endpoint to the backend admin interface. The admin must be able to set (and update) the Replicate API key via a dedicated admin-only backend function (setReplicateApiKey). The key must be stored in stable memory so it survives canister upgrades. A companion query (hasReplicateApiKey: Bool) must allow the frontend to check whether the key is configured.",
+      "reqIds": [
+        "REQ-16"
       ],
       "status": "pending"
     }

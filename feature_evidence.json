@@ -2,11 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-all-credit-gate-checks-on-the-frontend-the-generate-button-must-always-be-enabled-regardless-of-the-displayed-credit-balance-no-low-credits-warning-disabled-state-or-credit-threshold-logic-should-appear-anywhere-in-the-ui",
-      "featureTitle": "Remove all credit-gate checks on the frontend. The Generate button must always be enabled regardless of the displayed credit balance. No low-credits warning, disabled state, or credit-threshold logic should appear anywhere in the UI.",
+      "featureId": "feature-update-the-admin-page-to-include-a-replicate-api-key-configuration-section-display-the-current-key-status-configured-not-configured-via-hasreplicateapikey-provide-a-password-type-text-input-and-a-save-button-that-calls-setreplicateapikey-and-show-a-success-or-error-toast-on-completion-if-the-key-is-not-configured-display-a-prominent-warning-banner-on-the-admin-page",
+      "featureTitle": "Update the Admin page to include a Replicate API Key configuration section. Display the current key status (configured / not configured) via hasReplicateApiKey, provide a password-type text input and a Save button that calls setReplicateApiKey, and show a success or error toast on completion. If the key is not configured, display a prominent warning banner on the Admin page.",
       "files": [
-        "frontend/src/components/GenerationTab.tsx",
-        "frontend/src/pages/GeneratePage.tsx"
+        "frontend/src/components/ReplicateConfigSetup.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/AdminPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -19,7 +20,50 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-17"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-client-side-exponential-backoff-retry-logic-in-the-generationtab-component-after-a-generation-error-display-a-retry-button-that-re-submits-the-same-prompt-up-to-3-times-with-delays-of-2s-4s-and-8s-between-attempts-show-the-current-attempt-number-e-g-retrying-attempt-2-3-during-retries-use-a-stable-idempotency-key-derived-from-prompt-timestamp-stored-in-component-state-so-the-same-request-is-not-double-processed",
+      "featureTitle": "Implement client-side exponential backoff retry logic in the GenerationTab component. After a generation error, display a 'Retry' button that re-submits the same prompt up to 3 times with delays of 2s, 4s, and 8s between attempts. Show the current attempt number (e.g., 'Retrying… attempt 2/3') during retries. Use a stable idempotency key (derived from prompt + timestamp) stored in component state so the same request is not double-processed.",
+      "files": [
+        "frontend/src/components/GenerationTab.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-18"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-improve-the-generation-error-ux-on-the-generationtab-component-when-a-typed-error-variant-is-returned-from-the-backend-apikeymissing-apierror-timeout-parseerror-display-a-specific-human-readable-error-message-corresponding-to-the-error-type-rather-than-a-generic-generation-error-map-each-variant-to-a-distinct-user-facing-string-e-g-service-not-configured-contact-admin-provider-error-please-retry-request-timed-out-please-retry-unexpected-response-please-retry",
+      "featureTitle": "Improve the generation error UX on the GenerationTab component. When a typed error variant is returned from the backend (#ApiKeyMissing, #ApiError, #Timeout, #ParseError), display a specific, human-readable error message corresponding to the error type rather than a generic 'Generation error'. Map each variant to a distinct user-facing string (e.g., 'Service not configured — contact admin', 'Provider error — please retry', 'Request timed out — please retry', 'Unexpected response — please retry').",
+      "files": [
+        "frontend/src/components/GenerationTab.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-19"
       ],
       "confidence": "high"
     }

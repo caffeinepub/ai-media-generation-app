@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AccessDeniedScreen from '../components/AccessDeniedScreen';
 import StripeConfigSetup from '../components/StripeConfigSetup';
+import ReplicateConfigSetup from '../components/ReplicateConfigSetup';
 import { useIsCallerAdmin, useGetAllUsers, useAdjustUserCredits } from '../hooks/useQueries';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -189,6 +190,7 @@ function AdminContent() {
 
         {/* Sidebar */}
         <div className="space-y-4">
+          <ReplicateConfigSetup />
           <StripeConfigSetup />
         </div>
       </div>

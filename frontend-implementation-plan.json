@@ -1,26 +1,73 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove frontend credit restrictions and gating logic",
+  "title": "Fix media generation failures — robust error handling, retry logic, and Replicate API integration hardening",
   "requirements": [
     {
-      "id": "REQ-13",
-      "summary": "Remove all credit-gate checks on the frontend. The Generate button must always be enabled regardless of the displayed credit balance. No low-credits warning, disabled state, or credit-threshold logic should appear anywhere in the UI.",
+      "id": "REQ-17",
+      "summary": "Add Replicate API Key configuration section to Admin page with status display, password input, save button, and warning banner when key is not configured",
       "acceptanceCriteria": [
-        "The Generate button is always enabled on the generation page, irrespective of the credit balance value.",
-        "No warning, tooltip, or message about insufficient credits is rendered anywhere in the app.",
-        "Credit balance may still be displayed for informational purposes but does not gate any action."
+        "Admin page shows 'Replicate API Key: Configured ✓' or 'Not Configured ✗' based on hasReplicateApiKey.",
+        "A password input and Save button allow the admin to set or rotate the key.",
+        "On save success a success toast appears; on error an error toast appears.",
+        "If key is not configured, a warning banner is shown at the top of the Admin page."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/GeneratePage.tsx",
-          "operation": "modify",
-          "description": "Remove the low-credits warning UI that conditionally renders based on credit balance. Remove any credit-threshold checks (e.g., credits < 10) and the associated warning banner. Keep the credit balance display for informational purposes only."
+          "path": "frontend/src/components/ReplicateConfigSetup.tsx",
+          "operation": "create",
+          "description": "Create a new component to manage Replicate API key configuration. Include a query to hasReplicateApiKey to display the current status (Configured ✓ / Not Configured ✗). Provide a password-type input field and a Save button that calls setReplicateApiKey from useSetReplicateApiKey mutation. Display success or error toasts using Sonner based on mutation result. When the key is not configured, render a prominent warning banner at the top of the component prompting the admin to configure the key before media generation will work."
         },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add two new hooks: useHasReplicateApiKey (query hook that calls actor.hasReplicateApiKey to return boolean status) and useSetReplicateApiKey (mutation hook that accepts apiKey string parameter and calls actor.setReplicateApiKey, invalidating the hasReplicateApiKey query on success). Both hooks should follow the established pattern of checking actor availability and include proper error handling."
+        },
+        {
+          "path": "frontend/src/pages/AdminPage.tsx",
+          "operation": "modify",
+          "description": "Import and render the ReplicateConfigSetup component below the StripeConfigSetup component and above the user management table. No additional wiring is required; the component is self-contained and handles its own state and API calls."
+        }
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "summary": "Implement client-side exponential backoff retry logic in GenerationTab with retry button, attempt counter, and idempotency key",
+      "acceptanceCriteria": [
+        "After a generation error a 'Retry' button appears alongside the error message.",
+        "Clicking Retry automatically re-submits the prompt up to 3 additional times.",
+        "The status indicator shows 'Retrying… attempt N/3' during retry attempts.",
+        "The idempotency key is fixed for the duration of the retry sequence and reset when the user types a new prompt.",
+        "After 3 failed retries the status shows a final error message and the Retry button is replaced with a 'Start over' option."
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/components/GenerationTab.tsx",
           "operation": "modify",
-          "description": "Remove any disabled state or credit-gating logic from the Generate button. Ensure the button is always enabled and clickable regardless of the credit balance. Remove any credit balance checks (e.g., credits < 5) that previously controlled the button's disabled state."
+          "description": "Add retry state management to the component: introduce useState for retryCount (0-3), retryInProgress (boolean), and idempotencyKey (string derived from prompt + initial timestamp). When the generate mutation fails, display a 'Retry' button alongside the error message. Clicking Retry increments retryCount and re-invokes the mutation after exponential backoff delays (2s for attempt 1, 4s for attempt 2, 8s for attempt 3). During retry, update the status text to show 'Retrying… attempt N/3'. After 3 failed attempts, hide the Retry button and show a 'Start over' button that resets retryCount and idempotencyKey. Reset retryCount and generate a new idempotencyKey whenever the user modifies the prompt textarea. Use setTimeout for backoff delays and ensure proper cleanup in useEffect."
+        }
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "summary": "Improve generation error UX by mapping typed backend error variants to specific, human-readable messages",
+      "acceptanceCriteria": [
+        "#ApiKeyMissing displays: 'Service not configured — please contact the admin.'",
+        "#ApiError displays: 'Provider returned an error — please retry.'",
+        "#Timeout displays: 'Request timed out — please try again.'",
+        "#ParseError displays: 'Unexpected response from provider — please retry.'",
+        "No error case shows the raw internal error string to the user."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/GenerationTab.tsx",
+          "operation": "modify",
+          "description": "Add a helper function mapReplicateErrorToMessage that accepts a ReplicateError variant (imported from backend.d.ts) and returns a user-friendly error message string. Map ApiKeyMissing to 'Service not configured — please contact the admin.', ApiError to 'Provider returned an error — please retry.', Timeout to 'Request timed out — please try again.', and ParseError to 'Unexpected response from provider — please retry.'. Update the error display logic to call this helper function instead of showing generic or raw error messages. Ensure the mapped message is displayed in the status indicator or error message area."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update useGenerateImage and useGenerateVideo mutation hooks to properly handle and propagate ReplicateError variants returned from the backend. Ensure the error object structure is preserved so that the GenerationTab component can access the error variant discriminator (__kind__) and map it to the appropriate user message. Do not flatten or stringify the error; pass it through as-is."
         }
       ]
     }

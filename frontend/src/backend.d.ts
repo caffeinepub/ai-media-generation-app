@@ -44,6 +44,19 @@ export interface StripeConfiguration {
     allowedCountries: Array<string>;
     secretKey: string;
 }
+export type ReplicateError = {
+    __kind__: "ParseError";
+    ParseError: string;
+} | {
+    __kind__: "Timeout";
+    Timeout: null;
+} | {
+    __kind__: "ApiError";
+    ApiError: string;
+} | {
+    __kind__: "ApiKeyMissing";
+    ApiKeyMissing: null;
+};
 export interface UserProfile {
     name: string;
 }
@@ -61,17 +74,19 @@ export interface backendInterface {
     adjustUserCredits(_user: Principal, _amount: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
-    generateImage(prompt: string): Promise<string>;
-    generateVideo(prompt: string): Promise<string>;
+    generateImage(prompt: string): Promise<ReplicateError>;
+    generateVideo(prompt: string): Promise<ReplicateError>;
     getAllUsers(): Promise<Array<[Principal, bigint]>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getGallery(): Promise<Array<string>>;
     getStripeSessionStatus(sessionId: string): Promise<StripeSessionStatus>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    hasReplicateApiKey(): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
     isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    setReplicateApiKey(apiKey: string): Promise<void>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
 }

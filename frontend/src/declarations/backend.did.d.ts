@@ -10,6 +10,10 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type ReplicateError = { 'ParseError' : string } |
+  { 'Timeout' : null } |
+  { 'ApiError' : string } |
+  { 'ApiKeyMissing' : null };
 export interface ShoppingItem {
   'productName' : string,
   'currency' : string,
@@ -53,17 +57,19 @@ export interface _SERVICE {
     [Array<ShoppingItem>, string, string],
     string
   >,
-  'generateImage' : ActorMethod<[string], string>,
-  'generateVideo' : ActorMethod<[string], string>,
+  'generateImage' : ActorMethod<[string], ReplicateError>,
+  'generateVideo' : ActorMethod<[string], ReplicateError>,
   'getAllUsers' : ActorMethod<[], Array<[Principal, bigint]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getGallery' : ActorMethod<[], Array<string>>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'hasReplicateApiKey' : ActorMethod<[], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setReplicateApiKey' : ActorMethod<[string], undefined>,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
 }

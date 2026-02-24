@@ -20,6 +20,12 @@ export const ShoppingItem = IDL.Record({
   'priceInCents' : IDL.Nat,
   'productDescription' : IDL.Text,
 });
+export const ReplicateError = IDL.Variant({
+  'ParseError' : IDL.Text,
+  'Timeout' : IDL.Null,
+  'ApiError' : IDL.Text,
+  'ApiKeyMissing' : IDL.Null,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
@@ -61,8 +67,8 @@ export const idlService = IDL.Service({
       [IDL.Text],
       [],
     ),
-  'generateImage' : IDL.Func([IDL.Text], [IDL.Text], []),
-  'generateVideo' : IDL.Func([IDL.Text], [IDL.Text], []),
+  'generateImage' : IDL.Func([IDL.Text], [ReplicateError], []),
+  'generateVideo' : IDL.Func([IDL.Text], [ReplicateError], []),
   'getAllUsers' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Nat))],
@@ -77,9 +83,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'hasReplicateApiKey' : IDL.Func([], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setReplicateApiKey' : IDL.Func([IDL.Text], [], []),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
   'transform' : IDL.Func(
       [TransformationInput],
@@ -102,6 +110,12 @@ export const idlFactory = ({ IDL }) => {
     'quantity' : IDL.Nat,
     'priceInCents' : IDL.Nat,
     'productDescription' : IDL.Text,
+  });
+  const ReplicateError = IDL.Variant({
+    'ParseError' : IDL.Text,
+    'Timeout' : IDL.Null,
+    'ApiError' : IDL.Text,
+    'ApiKeyMissing' : IDL.Null,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const StripeSessionStatus = IDL.Variant({
@@ -141,8 +155,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Text],
         [],
       ),
-    'generateImage' : IDL.Func([IDL.Text], [IDL.Text], []),
-    'generateVideo' : IDL.Func([IDL.Text], [IDL.Text], []),
+    'generateImage' : IDL.Func([IDL.Text], [ReplicateError], []),
+    'generateVideo' : IDL.Func([IDL.Text], [ReplicateError], []),
     'getAllUsers' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Nat))],
@@ -157,9 +171,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'hasReplicateApiKey' : IDL.Func([], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setReplicateApiKey' : IDL.Func([IDL.Text], [], []),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
     'transform' : IDL.Func(
         [TransformationInput],

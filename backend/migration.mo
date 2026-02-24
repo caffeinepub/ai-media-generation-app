@@ -1,34 +1,19 @@
 import Map "mo:core/Map";
+import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
+import Text "mo:core/Text";
 import Stripe "stripe/stripe";
 
 module {
-  type UserProfile = {
-    name : Text;
-  };
-
-  type OldActor = {
+  public type OldActor = {
+    userProfiles : Map.Map<Principal, { name : Text }>;
     generations : Map.Map<Principal, Nat>;
     galleries : Map.Map<Principal, [Text]>;
-    userProfiles : Map.Map<Principal, UserProfile>;
     configuration : ?Stripe.StripeConfiguration;
-    GENERATION_COST : Nat; // This dropped field is now explicit
-    creditBalances : Map.Map<Principal, Nat>; // This dropped field is now explicit
+    // Removed Replicate config and error from old state
   };
 
-  type NewActor = {
-    generations : Map.Map<Principal, Nat>;
-    galleries : Map.Map<Principal, [Text]>;
-    userProfiles : Map.Map<Principal, UserProfile>;
-    configuration : ?Stripe.StripeConfiguration;
-  };
-
-  public func run(old : OldActor) : NewActor {
-    {
-      generations = old.generations;
-      galleries = old.galleries;
-      userProfiles = old.userProfiles;
-      configuration = old.configuration;
-    };
+  public func run(old : OldActor) : OldActor {
+    old;
   };
 };
