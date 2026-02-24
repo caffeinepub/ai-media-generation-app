@@ -1,0 +1,206 @@
+{
+  "kind": "build_request",
+  "title": "AI Media Generation App with Replicate API, Credit System & Internet Identity",
+  "projectName": "AI Media Studio",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement Internet Identity authentication so users can securely log in and log out. All protected features (generation, gallery, credits) must require authentication.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Internet Identity login for secure authentication"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Login button visible on landing page for unauthenticated users",
+        "After authentication, user principal is stored and used to scope data",
+        "Logout clears session and redirects to landing page",
+        "Protected routes redirect unauthenticated users to login"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement a credit system in the backend where each user account holds a credit balance. Each image or video generation costs exactly 500 credits. Deduct 500 credits atomically when a generation is triggered and reject the request if the user has fewer than 500 credits.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "credits should be five hundred",
+          "500 credits per generation with reservation logic"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each generation call checks that user balance >= 500 before proceeding",
+        "500 credits are deducted atomically upon successful generation trigger",
+        "Request is rejected with an error message if balance is insufficient",
+        "Credit balance is stored per user principal in stable storage"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Integrate the Replicate API on the backend to generate images. Expose a backend endpoint that accepts a text prompt, calls Replicate's image generation model, stores the resulting image URL in the user's gallery, and returns the result to the frontend.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Image generation via Replicate API",
+          "generates image's and video replicate api"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend calls Replicate API with user-supplied prompt for image generation",
+        "Result URL is stored associated with the user's principal",
+        "Generation is only triggered after 500 credits are reserved",
+        "Errors from Replicate API are surfaced to the frontend with clear messages"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Integrate the Replicate API on the backend to generate videos. Expose a backend endpoint that accepts a text prompt, calls Replicate's video generation model, stores the resulting video URL in the user's gallery, and returns the result to the frontend.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Video generation via Replicate API",
+          "generates image's and video replicate api"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend calls Replicate API with user-supplied prompt for video generation",
+        "Result URL is stored associated with the user's principal",
+        "Generation is only triggered after 500 credits are reserved",
+        "Errors from Replicate API are surfaced to the frontend with clear messages"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Build a personal gallery page where authenticated users can view all their previously generated images and videos. Each item should display its media, the prompt used, the generation type (image or video), and the creation timestamp.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Personal gallery to view generated media"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Gallery page is accessible only to authenticated users",
+        "Displays all generated images and videos for the logged-in user",
+        "Each card shows media preview, prompt text, type badge, and timestamp",
+        "Gallery updates after each successful generation"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Build an admin panel accessible only to a designated admin principal. The admin panel must display a list of all users with their principal IDs, credit balances, and total generations. Admins can manually adjust user credit balances.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin panel for managing users and content"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin panel route is restricted to the designated admin principal",
+        "Displays a table of all registered users with credit balance and generation count",
+        "Admin can increment or set a user's credit balance",
+        "Non-admin users receive an access-denied response if they attempt to access admin endpoints"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Integrate Stripe payments on the frontend so users can purchase credit bundles. Display credit package options (e.g., 1000, 5000, 10000 credits). On successful Stripe payment confirmation, the backend increments the user's credit balance by the purchased amount.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Stripe payments integration for purchasing credits"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Credits purchase page shows at least three bundle options with prices",
+        "Stripe payment flow is initiated from the frontend",
+        "On successful payment, backend credit balance is updated for the authenticated user",
+        "User sees updated credit balance immediately after purchase"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Build a generation page with two tabs — Image and Video. Each tab has a prompt input field, a Generate button, a live status indicator (idle / processing / complete / error), and renders the result inline when complete. Show the user's current credit balance prominently and disable the Generate button if balance is below 500.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "generates image's and video replicate api",
+          "credits should be five hundred"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Image tab and Video tab are both present on the generation page",
+        "Current credit balance is displayed and refreshes after generation",
+        "Generate button is disabled when credit balance < 500",
+        "Status indicator updates through idle → processing → complete/error states",
+        "Generated image or video is rendered inline after successful generation"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Apply a dark, ultra-modern visual theme across the entire app. Use a near-black background, high-contrast accent colors (avoid blue and purple), sharp typography, subtle glassmorphism or neon glow effects on cards and buttons, and a consistent design language across all pages.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Dark ultra-modern UI design"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All pages use a dark background (near-black)",
+        "Accent colors are consistently applied and are not blue or purple",
+        "Cards and interactive elements use glassmorphism or subtle glow effects",
+        "Typography is sharp, modern, and consistent across all views",
+        "Design is responsive and visually coherent across generation, gallery, and admin pages"
+      ]
+    }
+  ],
+  "constraints": [
+    "All Motoko logic must reside in a single main actor (backend/main.mo)",
+    "Do not edit any file under frontend/src/hooks/ or frontend/src/components/ui",
+    "Internet Identity is the only supported authentication method — no external OAuth providers",
+    "Credit cost per generation is fixed at exactly 500 credits and must not be configurable from the frontend",
+    "Replicate API key must be stored securely in the backend, never exposed to the frontend"
+  ],
+  "nonGoals": [
+    "Real-time WebSocket updates for generation progress",
+    "Social sharing of generated media",
+    "Multi-model selection UI (use a single default Replicate model per media type)",
+    "Mobile native app",
+    "Email or SMS notifications"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Dark ultra-modern hero banner with abstract glowing particles and geometric shapes on near-black background (hero-banner.dim_1200x400.png)",
+      "App logo mark — stylized abstract spark or circuit node in bright cyan/emerald tones on dark background (app-logo.dim_256x256.png)"
+    ],
+    "edits": []
+  }
+}

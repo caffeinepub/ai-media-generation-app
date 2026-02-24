@@ -1,0 +1,104 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T21:23:36.448Z",
+  "summary": "The diff implements most of the requested requirements including Internet Identity authentication, credit system, Replicate API integration for images and videos, gallery page, admin panel, Stripe payments, generation page with tabs, and dark ultra-modern theme. However, several acceptance criteria are partially or not met: the gallery stores only URLs without prompt text, type badge, or creation timestamps (REQ-5 AC); the admin panel lacks a generation count column (REQ-6 AC); credit balance is not stored in stable storage (REQ-2 AC); and the GalleryCard component infers type from URL heuristics rather than storing actual generation type metadata.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Credit balance must be stored per user principal in stable storage",
+      "reason": "The backend main.mo uses Map.empty<Principal, Nat>() for creditBalances and generations, but there is no evidence of stable variable declarations in the visible Motoko code, meaning balances would be lost on canister upgrade.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Each gallery card must show media preview, prompt text, type badge, and timestamp",
+      "reason": "The gallery only stores and retrieves URLs as string[]. There is no prompt text, generation type, or creation timestamp stored or displayed. GalleryCard only receives a url and index prop, infers type from URL heuristic, and displays only the URL string with no prompt or timestamp.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/components/GalleryCard.tsx",
+        "frontend/src/pages/GalleryPage.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Admin panel must display total generations per user",
+      "reason": "The getAllUsers backend function returns Array<[Principal, bigint]> containing only principal and credits. No generation count is returned or displayed in the admin table.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/AdminPage.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "On successful Stripe payment, backend credit balance is updated for the authenticated user",
+      "reason": "There is a PaymentFailurePage but no PaymentSuccessPage visible in the diff. The success callback handler that increments credits in the backend after a successful payment is not shown in the included files. 9 added files were omitted so this may be partially implemented but cannot be confirmed.",
+      "evidence": [
+        "frontend/src/pages/CreditsPage.tsx",
+        "frontend/src/pages/PaymentFailurePage.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Profile setup modal requiring users to enter a display name before using the app",
+      "reason": "The BuildRequest does not mention a user profile or display name setup flow. A ProfileSetupModal component was added that forces new users to enter a name.",
+      "evidence": [
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/components/Layout.tsx"
+      ]
+    },
+    {
+      "description": "Stripe configuration setup panel in the admin area with secret key and allowed countries fields",
+      "reason": "The BuildRequest does not mention an admin-facing Stripe configuration UI. The StripeConfigSetup component allows admins to input a Stripe secret key and configure allowed countries.",
+      "evidence": [
+        "frontend/src/components/StripeConfigSetup.tsx",
+        "frontend/src/pages/AdminPage.tsx"
+      ]
+    },
+    {
+      "description": "Generic ShoppingItem type abstraction used for Stripe checkout session creation",
+      "reason": "The BuildRequest specifies simple credit bundle purchases. The implementation introduces a generic ShoppingItem type not mentioned in the requirements.",
+      "evidence": [
+        "frontend/src/pages/CreditsPage.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AccessDeniedScreen.tsx",
+    "frontend/src/components/GalleryCard.tsx",
+    "frontend/src/components/GenerationTab.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/components/ProtectedRoute.tsx",
+    "frontend/src/components/StripeConfigSetup.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AdminPage.tsx",
+    "frontend/src/pages/CreditsPage.tsx",
+    "frontend/src/pages/GalleryPage.tsx",
+    "frontend/src/pages/GeneratePage.tsx",
+    "frontend/src/pages/IndexPage.tsx",
+    "frontend/src/pages/PaymentFailurePage.tsx",
+    "frontend/src/pages/PaymentSuccessPage.tsx",
+    "frontend/src/routeTree.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

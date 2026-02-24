@@ -1,0 +1,134 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-internet-identity-authentication-so-users-can-securely-log-in-and-log-out-all-protected-features-generation-gallery-credits-must-require-authentication",
+      "featureTitle": "Implement Internet Identity authentication so users can securely log in and log out. All protected features (generation, gallery, credits) must require authentication.",
+      "files": [
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/components/ProtectedRoute.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-personal-gallery-page-where-authenticated-users-can-view-all-their-previously-generated-images-and-videos-each-item-should-display-its-media-the-prompt-used-the-generation-type-image-or-video-and-the-creation-timestamp",
+      "featureTitle": "Build a personal gallery page where authenticated users can view all their previously generated images and videos. Each item should display its media, the prompt used, the generation type (image or video), and the creation timestamp.",
+      "files": [
+        "frontend/src/components/GalleryCard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-an-admin-panel-accessible-only-to-a-designated-admin-principal-the-admin-panel-must-display-a-list-of-all-users-with-their-principal-ids-credit-balances-and-total-generations-admins-can-manually-adjust-user-credit-balances",
+      "featureTitle": "Build an admin panel accessible only to a designated admin principal. The admin panel must display a list of all users with their principal IDs, credit balances, and total generations. Admins can manually adjust user credit balances.",
+      "files": [
+        "frontend/src/components/AccessDeniedScreen.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-integrate-stripe-payments-on-the-frontend-so-users-can-purchase-credit-bundles-display-credit-package-options-e-g-1000-5000-10000-credits-on-successful-stripe-payment-confirmation-the-backend-increments-the-user-s-credit-balance-by-the-purchased-amount",
+      "featureTitle": "Integrate Stripe payments on the frontend so users can purchase credit bundles. Display credit package options (e.g., 1000, 5000, 10000 credits). On successful Stripe payment confirmation, the backend increments the user's credit balance by the purchased amount.",
+      "files": [
+        "frontend/src/components/StripeConfigSetup.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-generation-page-with-two-tabs-image-and-video-each-tab-has-a-prompt-input-field-a-generate-button-a-live-status-indicator-idle-processing-complete-error-and-renders-the-result-inline-when-complete-show-the-user-s-current-credit-balance-prominently-and-disable-the-generate-button-if-balance-is-below-500",
+      "featureTitle": "Build a generation page with two tabs — Image and Video. Each tab has a prompt input field, a Generate button, a live status indicator (idle / processing / complete / error), and renders the result inline when complete. Show the user's current credit balance prominently and disable the Generate button if balance is below 500.",
+      "files": [
+        "frontend/src/components/GenerationTab.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-dark-ultra-modern-visual-theme-across-the-entire-app-use-a-near-black-background-high-contrast-accent-colors-avoid-blue-and-purple-sharp-typography-subtle-glassmorphism-or-neon-glow-effects-on-cards-and-buttons-and-a-consistent-design-language-across-all-pages",
+      "featureTitle": "Apply a dark, ultra-modern visual theme across the entire app. Use a near-black background, high-contrast accent colors (avoid blue and purple), sharp typography, subtle glassmorphism or neon glow effects on cards and buttons, and a consistent design language across all pages.",
+      "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "http-outcalls@3.0.0",
+        "stripe@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Full-stack AI media generation app on the Internet Computer that creates images and videos using the Replicate API. Features a dark ultra-modern UI, credit system (500 credits per generation), credit reservation logic, personal gallery, admin panel, Stripe payments, and Internet Identity login.",
+  "architectural_notes": [
+    "Runs on the Internet Computer (ICP) platform",
+    "Uses Replicate API for all AI media generation (images and videos)",
+    "Credit reservation logic must hold credits before generation starts and release on failure"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Dark ultra-modern hero banner with abstract glowing particles and geometric shapes on near-black background (hero-banner.dim_1200x400.png)\n- App logo mark — stylized abstract spark or circuit node in bright cyan/emerald tones on dark background (app-logo.dim_256x256.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-internet-identity-authentication-so-users-can-securely-log-in-and-log-out-all-protected-features-generation-gallery-credits-must-require-authentication",
+      "title": "Implement Internet Identity authentication so users can securely log in and log out. All protected features (generation, gallery, credits) must require authentication.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-personal-gallery-page-where-authenticated-users-can-view-all-their-previously-generated-images-and-videos-each-item-should-display-its-media-the-prompt-used-the-generation-type-image-or-video-and-the-creation-timestamp",
+      "title": "Build a personal gallery page where authenticated users can view all their previously generated images and videos. Each item should display its media, the prompt used, the generation type (image or video), and the creation timestamp.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-an-admin-panel-accessible-only-to-a-designated-admin-principal-the-admin-panel-must-display-a-list-of-all-users-with-their-principal-ids-credit-balances-and-total-generations-admins-can-manually-adjust-user-credit-balances",
+      "title": "Build an admin panel accessible only to a designated admin principal. The admin panel must display a list of all users with their principal IDs, credit balances, and total generations. Admins can manually adjust user credit balances.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-stripe-payments-on-the-frontend-so-users-can-purchase-credit-bundles-display-credit-package-options-e-g-1000-5000-10000-credits-on-successful-stripe-payment-confirmation-the-backend-increments-the-user-s-credit-balance-by-the-purchased-amount",
+      "title": "Integrate Stripe payments on the frontend so users can purchase credit bundles. Display credit package options (e.g., 1000, 5000, 10000 credits). On successful Stripe payment confirmation, the backend increments the user's credit balance by the purchased amount.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-generation-page-with-two-tabs-image-and-video-each-tab-has-a-prompt-input-field-a-generate-button-a-live-status-indicator-idle-processing-complete-error-and-renders-the-result-inline-when-complete-show-the-user-s-current-credit-balance-prominently-and-disable-the-generate-button-if-balance-is-below-500",
+      "title": "Build a generation page with two tabs — Image and Video. Each tab has a prompt input field, a Generate button, a live status indicator (idle / processing / complete / error), and renders the result inline when complete. Show the user's current credit balance prominently and disable the Generate button if balance is below 500.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-dark-ultra-modern-visual-theme-across-the-entire-app-use-a-near-black-background-high-contrast-accent-colors-avoid-blue-and-purple-sharp-typography-subtle-glassmorphism-or-neon-glow-effects-on-cards-and-buttons-and-a-consistent-design-language-across-all-pages",
+      "title": "Apply a dark, ultra-modern visual theme across the entire app. Use a near-black background, high-contrast accent colors (avoid blue and purple), sharp typography, subtle glassmorphism or neon glow effects on cards and buttons, and a consistent design language across all pages.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Image generation via Replicate API",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Video generation via Replicate API",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Credit system — 500 credits per generation with reservation logic",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Personal gallery to view generated media",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Admin panel for managing users and content",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Stripe payments integration for purchasing credits",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Internet Identity login for secure authentication",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Dark ultra-modern UI design",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Implement a credit system in the backend where each user account holds a credit balance. Each image or video generation costs exactly 500 credits. Deduct 500 credits atomically when a generation is triggered and reject the request if the user has fewer than 500 credits.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Integrate the Replicate API on the backend to generate images. Expose a backend endpoint that accepts a text prompt, calls Replicate's image generation model, stores the resulting image URL in the user's gallery, and returns the result to the frontend.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Integrate the Replicate API on the backend to generate videos. Expose a backend endpoint that accepts a text prompt, calls Replicate's video generation model, stores the resulting video URL in the user's gallery, and returns the result to the frontend.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "AI Media Generation App",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

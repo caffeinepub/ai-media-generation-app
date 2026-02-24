@@ -1,0 +1,22 @@
+{
+  "frontend/src/index.css": "Global dark ultra-modern theme with OKLCH color tokens, Space Grotesk/JetBrains Mono fonts, glassmorphism utilities, glow effects, and gradient text helpers.",
+  "frontend/tailwind.config.js": "Extended Tailwind config with custom dark theme colors (cyan/emerald/amber accents), Space Grotesk font, glow box-shadows, and surface color tokens.",
+  "frontend/src/App.tsx": "Root app component wrapping RouterProvider with TanStack Router and dark ThemeProvider, plus Sonner Toaster.",
+  "frontend/src/routeTree.ts": "TanStack Router route tree defining all app routes (index, generate, gallery, admin, credits, payment-success, payment-failure) under a shared Layout root.",
+  "frontend/src/hooks/useQueries.ts": "All React Query hooks for backend integration: user profile, credits, image/video generation, gallery, admin user management, and Stripe checkout.",
+  "frontend/src/components/Layout.tsx": "App shell with sticky glassmorphism header (logo, nav links, credit balance, login/logout), responsive mobile menu, and footer with caffeine.ai attribution.",
+  "frontend/src/components/ProfileSetupModal.tsx": "First-time user profile setup dialog using Internet Identity, prompts for display name and calls saveCallerUserProfile mutation.",
+  "frontend/src/components/ProtectedRoute.tsx": "Auth guard component that shows a login prompt for unauthenticated users and a loading spinner during initialization.",
+  "frontend/src/components/AccessDeniedScreen.tsx": "Full-page access denied screen for non-admin users attempting to access restricted routes.",
+  "frontend/src/components/GenerationTab.tsx": "Reusable generation tab for image/video with prompt textarea, credit check, status indicator (idle/processing/complete/error), and inline result display.",
+  "frontend/src/components/GalleryCard.tsx": "Individual gallery card displaying image or video preview with hover effects, type badge, and external link.",
+  "frontend/src/components/StripeConfigSetup.tsx": "Admin Stripe configuration form with secret key input and allowed countries management, hidden when already configured.",
+  "frontend/src/pages/IndexPage.tsx": "Landing page with hero banner, animated CTA, feature grid, stats, and how-it-works section; adapts for authenticated vs unauthenticated users.",
+  "frontend/src/pages/GeneratePage.tsx": "Protected generation page with Image/Video tabs, credit balance display, low-credit warning, and GenerationTab components.",
+  "frontend/src/pages/GalleryPage.tsx": "Protected gallery page showing all user-generated media in a responsive grid with loading skeletons and empty state.",
+  "frontend/src/pages/AdminPage.tsx": "Protected admin panel with user management table, credit adjustment, stats overview, and Stripe configuration setup.",
+  "frontend/src/pages/CreditsPage.tsx": "Protected credits purchase page with three Stripe bundle options (Starter/Creator/Pro), current balance display, and checkout flow.",
+  "frontend/src/pages/PaymentSuccessPage.tsx": "Payment success page that invalidates credits query and shows navigation to generate or credits pages.",
+  "frontend/src/pages/PaymentFailurePage.tsx": "Payment failure page with retry link to credits page and back-to-home navigation.",
+  "frontend/index.html": "HTML entry point with updated title \"AI Media Studio\" and Google Fonts preconnect."
+}
