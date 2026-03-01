@@ -1,57 +1,57 @@
-import { useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useEffect } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, Zap, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle, Sparkles, ArrowRight, LayoutGrid } from 'lucide-react';
 
 export default function PaymentSuccessPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Invalidate credits to refresh balance after successful payment
     queryClient.invalidateQueries({ queryKey: ['credits'] });
   }, [queryClient]);
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh] px-4">
-      <div className="glass-card rounded-2xl p-10 max-w-md w-full text-center space-y-6">
-        {/* Success Icon */}
-        <div className="relative mx-auto w-20 h-20">
-          <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping opacity-30" />
-          <div className="relative w-20 h-20 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center glow-cyan">
-            <CheckCircle size={36} className="text-primary" />
-          </div>
+    <div className="bg-gradient-dark min-h-screen flex items-center justify-center px-4">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 left-1/3 w-96 h-96 rounded-full opacity-10"
+          style={{ background: 'radial-gradient(circle, rgba(80,200,120,0.4) 0%, transparent 70%)' }} />
+      </div>
+
+      <div className="relative glass-emerald rounded-3xl p-12 max-w-md w-full text-center">
+        <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center animate-float"
+          style={{ background: 'rgba(80,200,120,0.15)', border: '1px solid rgba(80,200,120,0.3)' }}>
+          <CheckCircle size={40} className="text-emerald-400" />
         </div>
 
-        <div>
-          <h1 className="text-2xl font-bold gradient-text mb-2">Payment Successful!</h1>
-          <p className="text-muted-foreground">
-            Your credits have been added to your account. You're ready to create amazing AI media!
-          </p>
+        <div className="badge-emerald inline-flex items-center gap-1.5 mb-4">
+          <Sparkles size={12} />
+          Payment Successful
         </div>
 
-        <div className="glass rounded-xl p-4 flex items-center justify-center gap-2">
-          <Zap size={18} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">Credits added to your balance</span>
-        </div>
+        <h1 className="text-2xl font-display font-bold text-white/90 mb-3">
+          Credits <span className="text-gradient-emerald">Added!</span>
+        </h1>
+        <p className="text-white/40 text-sm leading-relaxed mb-8">
+          Your payment was processed successfully. Your credits have been added to your account and you're ready to create amazing media.
+        </p>
 
-        <div className="flex flex-col gap-3">
-          <Button
-            onClick={() => navigate({ to: '/generate' })}
-            className="w-full btn-primary gap-2"
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            to="/generate"
+            className="btn-emerald inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm shadow-glow-emerald"
           >
-            <Zap size={16} />
+            <Sparkles size={16} />
             Start Generating
-            <ArrowRight size={16} />
-          </Button>
-          <Button
-            onClick={() => navigate({ to: '/credits' })}
-            variant="outline"
-            className="w-full border-border hover:border-primary/50"
+            <ArrowRight size={14} />
+          </Link>
+          <Link
+            to="/gallery"
+            className="glass inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm text-white/70 hover:text-white border border-white/10 transition-all"
           >
-            View Credit Balance
-          </Button>
+            <LayoutGrid size={16} />
+            View Gallery
+          </Link>
         </div>
       </div>
     </div>

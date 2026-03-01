@@ -1,92 +1,81 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T22:10:08.298Z",
+  "generatedAt": "2026-03-01T18:04:33.697Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 6,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-14",
-        "summary": "Audit and harden the backend Replicate API HTTP outcall for image generation: ensure the API key is read from a stable config store, the request payload matches Replicate's current REST schema (POST /v1/predictions with correct model version, input fields, and Content-Type: application/json), the IC HTTP outcall transform function is correctly stripping non-deterministic headers, and the response body is fully parsed before storing the result URL. Return a structured error variant (#ApiKeyMissing, #ApiError(text), #Timeout, #ParseError) instead of a generic trap so the frontend can display a meaningful message.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-15",
-        "summary": "Audit and harden the backend Replicate API HTTP outcall for video generation using the same approach as REQ-14: correct payload schema, deterministic transform, typed error variants, and gallery storage before returning.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-16",
-        "summary": "Add a Replicate API key configuration endpoint to the backend admin interface. The admin must be able to set (and update) the Replicate API key via a dedicated admin-only backend function (setReplicateApiKey). The key must be stored in stable memory so it survives canister upgrades. A companion query (hasReplicateApiKey: Bool) must allow the frontend to check whether the key is configured.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-17",
-        "summary": "Update the Admin page to include a Replicate API Key configuration section. Display the current key status (configured / not configured) via hasReplicateApiKey, provide a password-type text input and a Save button that calls setReplicateApiKey, and show a success or error toast on completion. If the key is not configured, display a prominent warning banner on the Admin page.",
+        "id": "REQ-20",
+        "summary": "Refresh the frontend visual theme to use mature, rich CSS linear gradients (deep charcoal, slate, and warm amber/emerald/gold accent tones — no blue or purple) combined with glassmorphism card surfaces (backdrop-blur, semi-transparent borders, subtle inner glow), high-contrast sharp typography, and consistent neon-glow hover effects on interactive elements across all pages (landing, generate, gallery, credits, admin).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/ReplicateConfigSetup.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/AdminPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/ReplicateConfigSetup.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/AdminPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-18",
-        "summary": "Implement client-side exponential backoff retry logic in the GenerationTab component. After a generation error, display a 'Retry' button that re-submits the same prompt up to 3 times with delays of 2s, 4s, and 8s between attempts. Show the current attempt number (e.g., 'Retrying… attempt 2/3') during retries. Use a stable idempotency key (derived from prompt + timestamp) stored in component state so the same request is not double-processed.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/GenerationTab.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/GenerationTab.tsx"
-        ]
-      },
-      {
-        "id": "REQ-19",
-        "summary": "Improve the generation error UX on the GenerationTab component. When a typed error variant is returned from the backend (#ApiKeyMissing, #ApiError, #Timeout, #ParseError), display a specific, human-readable error message corresponding to the error type rather than a generic 'Generation error'. Map each variant to a distinct user-facing string (e.g., 'Service not configured — contact admin', 'Provider error — please retry', 'Request timed out — please retry', 'Unexpected response — please retry').",
-        "status": "implemented",
-        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/pages/IndexPage.tsx",
+          "frontend/src/pages/GeneratePage.tsx",
+          "frontend/src/pages/GalleryPage.tsx",
+          "frontend/src/pages/CreditsPage.tsx",
+          "frontend/src/pages/AdminPage.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/components/GalleryCard.tsx",
           "frontend/src/components/GenerationTab.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/components/ReplicateConfigSetup.tsx",
+          "frontend/src/components/StripeConfigSetup.tsx",
+          "frontend/src/components/AccessDeniedScreen.tsx",
+          "frontend/src/pages/PaymentSuccessPage.tsx",
+          "frontend/src/pages/PaymentFailurePage.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/pages/IndexPage.tsx",
+          "frontend/src/pages/GeneratePage.tsx",
+          "frontend/src/pages/GalleryPage.tsx",
+          "frontend/src/pages/CreditsPage.tsx",
+          "frontend/src/pages/AdminPage.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/components/GalleryCard.tsx",
           "frontend/src/components/GenerationTab.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/components/ReplicateConfigSetup.tsx",
+          "frontend/src/components/StripeConfigSetup.tsx",
+          "frontend/src/components/AccessDeniedScreen.tsx",
+          "frontend/src/pages/PaymentSuccessPage.tsx",
+          "frontend/src/pages/PaymentFailurePage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
+    "build-template/README.md",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
+    "frontend/src/components/AccessDeniedScreen.tsx",
+    "frontend/src/components/GalleryCard.tsx",
     "frontend/src/components/GenerationTab.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
     "frontend/src/components/ReplicateConfigSetup.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/components/StripeConfigSetup.tsx",
+    "frontend/src/index.css",
     "frontend/src/pages/AdminPage.tsx",
+    "frontend/src/pages/CreditsPage.tsx",
+    "frontend/src/pages/GalleryPage.tsx",
+    "frontend/src/pages/GeneratePage.tsx",
+    "frontend/src/pages/IndexPage.tsx",
+    "frontend/src/pages/PaymentFailurePage.tsx",
+    "frontend/src/pages/PaymentSuccessPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

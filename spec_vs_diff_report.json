@@ -1,91 +1,29 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T22:10:08.294Z",
-  "summary": "The diff implements most requirements across REQ-14 through REQ-19. Backend hardening (REQ-14/15/16), Admin page updates (REQ-17), retry logic (REQ-18), and error mapping (REQ-19) are all present. However, several specific acceptance criteria have gaps: the backend's setReplicateApiKey uses Runtime.trap instead of returning #Unauthorized, the stable var survival of the key through upgrades is questionable given migration.mo structure, the backend appears to return #ApiError(url) on success rather than storing the URL and returning a success variant, and the transform function stripping non-deterministic headers is not evidenced in the diff.",
-  "missing_requirements": [
-    {
-      "id": "REQ-16",
-      "requirement": "Only the designated admin principal can call setReplicateApiKey; all other callers receive #Unauthorized (typed variant, not a trap).",
-      "reason": "The backend diff shows Runtime.trap('Unauthorized: Only admin can update Replicate API key') rather than returning a typed #Unauthorized variant. The AC specifies callers receive #Unauthorized, not a trap.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "requirement": "The IC HTTP outcall transform function is correctly stripping non-deterministic headers (Date, Set-Cookie, etc.) so consensus is not blocked.",
-      "reason": "No evidence of a transform function implementation is visible in the truncated backend/main.mo diff. The OutCall import is present but no transform stripping logic is shown.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-15",
-      "requirement": "The HTTP outcall transform for video generation strips non-deterministic headers.",
-      "reason": "Same as REQ-14 — no transform function implementation visible in the diff for video generation.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "requirement": "A successful prediction response is parsed and the resulting media URL is stored in the user's gallery entry before returning to the frontend. The function should return a success variant, not #ApiError(url).",
-      "reason": "The frontend code in GenerationTab.tsx explicitly detects a workaround where the backend returns #ApiError(url) when the URL looks like an HTTP URL to signal success. This indicates the backend is not returning a proper success path with gallery storage.",
-      "evidence": [
-        "frontend/src/components/GenerationTab.tsx"
-      ]
-    },
-    {
-      "id": "REQ-16",
-      "requirement": "The stored Replicate API key survives a canister upgrade (stored in stable var).",
-      "reason": "The backend uses var replicateConfig : ?ReplicateConfig = null which does not appear to be declared as a stable var. The migration.mo module does not include replicateConfig in the migrated state. Without stable var, the key would be lost on upgrade.",
-      "evidence": [
-        "backend/main.mo",
-        "backend/migration.mo"
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "requirement": "After 3 failed retries the Retry button is replaced with a 'Start over' option.",
-      "reason": "The GenerationTab.tsx diff is truncated at the fatal error path rendering. While a fatal status type is defined, the actual rendering of a 'Start over' button replacing the Retry button cannot be confirmed from the truncated diff.",
-      "evidence": [
-        "frontend/src/components/GenerationTab.tsx"
-      ]
-    }
-  ],
-  "hallucinated_features": [
-    {
-      "description": "A show/hide password toggle (eye/eye-off icon) was added to the Replicate API key input field in ReplicateConfigSetup.",
-      "reason": "The build request only specifies a password-type input and Save button. The show/hide toggle was not requested.",
-      "evidence": [
-        "frontend/src/components/ReplicateConfigSetup.tsx"
-      ]
-    },
-    {
-      "description": "A looksLikeUrl() workaround function was introduced in GenerationTab to detect backend success encoded as #ApiError(url).",
-      "reason": "This is a workaround for a backend behavior that itself violates REQ-14's requirement to return a proper success path. The workaround was not requested and masks a missing requirement.",
-      "evidence": [
-        "frontend/src/components/GenerationTab.tsx"
-      ]
-    },
-    {
-      "description": "backend/migration.mo was added as a separate migration module file.",
-      "reason": "The build request requires all Motoko logic to remain in the single actor file backend/main.mo. Creating a separate migration.mo file violates this constraint.",
-      "evidence": [
-        "backend/migration.mo"
-      ]
-    }
-  ],
-  "confidence": 0.72,
+  "generatedAt": "2026-03-01T18:04:33.694Z",
+  "summary": "The diff implements a comprehensive visual theme refresh across the frontend matching REQ-20. All major pages (IndexPage, GeneratePage, GalleryPage, CreditsPage, AdminPage) and supporting components have been updated with dark gradient backgrounds, glassmorphism surfaces, amber/emerald/gold accent colors, sharp typography, and neon-glow hover effects. No blue or purple colors are present in the palette. The implementation appears thorough and consistent with the acceptance criteria.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.92,
   "changed_files": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/AccessDeniedScreen.tsx",
+    "frontend/src/components/GalleryCard.tsx",
     "frontend/src/components/GenerationTab.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
     "frontend/src/components/ReplicateConfigSetup.tsx",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/components/StripeConfigSetup.tsx",
+    "frontend/src/index.css",
     "frontend/src/pages/AdminPage.tsx",
+    "frontend/src/pages/CreditsPage.tsx",
+    "frontend/src/pages/GalleryPage.tsx",
+    "frontend/src/pages/GeneratePage.tsx",
+    "frontend/src/pages/IndexPage.tsx",
+    "frontend/src/pages/PaymentFailurePage.tsx",
+    "frontend/src/pages/PaymentSuccessPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }

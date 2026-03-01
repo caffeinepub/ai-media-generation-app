@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Full-stack AI media generation app on the Internet Computer that creates images and videos using the Replicate API. Features a dark ultra-modern UI, unlimited credits (no credit cost per generation), personal gallery, admin panel, Stripe payments, and Internet Identity login.",
+  "projectStateVersion": 11,
+  "summary": "Full-stack AI media generation app on the Internet Computer that creates images and videos using the Replicate API. Features a dark, mature gradient UI with glassmorphism effects, unlimited credits (no credit cost per generation), personal gallery, admin panel, Stripe payments, and Internet Identity login.",
   "architectural_notes": [
     "Runs on the Internet Computer (ICP) platform",
     "Uses Replicate API for all AI media generation (images and videos)"
@@ -9,7 +9,7 @@
   "known_issues": [
     "Media generation (image/video) fails with 'generation error' state in production — root cause under investigation (Replicate API key, timeouts, payload issues)"
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-implement-internet-identity-authentication-so-users-can-securely-log-in-and-log-out-all-protected-features-generation-gallery-credits-must-require-authentication",
@@ -96,6 +96,14 @@
       "title": "Improve the generation error UX on the GenerationTab component. When a typed error variant is returned from the backend (#ApiKeyMissing, #ApiError, #Timeout, #ParseError), display a specific, human-readable error message corresponding to the error type rather than a generic 'Generation error'. Map each variant to a distinct user-facing string (e.g., 'Service not configured — contact admin', 'Provider error — please retry', 'Request timed out — please retry', 'Unexpected response — please retry').",
       "reqIds": [
         "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refresh-the-frontend-visual-theme-to-use-mature-rich-css-linear-gradients-deep-charcoal-slate-and-warm-amber-emerald-gold-accent-tones-no-blue-or-purple-combined-with-glassmorphism-card-surfaces-backdrop-blur-semi-transparent-borders-subtle-inner-glow-high-contrast-sharp-typography-and-consistent-neon-glow-hover-effects-on-interactive-elements-across-all-pages-landing-generate-gallery-credits-admin",
+      "title": "Refresh the frontend visual theme to use mature, rich CSS linear gradients (deep charcoal, slate, and warm amber/emerald/gold accent tones — no blue or purple) combined with glassmorphism card surfaces (backdrop-blur, semi-transparent borders, subtle inner glow), high-contrast sharp typography, and consistent neon-glow hover effects on interactive elements across all pages (landing, generate, gallery, credits, admin).",
+      "reqIds": [
+        "REQ-20"
       ],
       "version": 1
     }
@@ -203,6 +211,12 @@
       "reqIds": [
         "REQ-16"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Update the frontend theme to use mature, high-contrast gradient colors (CSS linear gradients) with glassmorphism design elements and sharp typography across all pages.",
+      "reqIds": [],
       "status": "pending"
     }
   ],

@@ -1,73 +1,99 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix media generation failures — robust error handling, retry logic, and Replicate API integration hardening",
+  "title": "Rebuild Media Generation Hub with mature gradient glassmorphism UI",
   "requirements": [
     {
-      "id": "REQ-17",
-      "summary": "Add Replicate API Key configuration section to Admin page with status display, password input, save button, and warning banner when key is not configured",
+      "id": "REQ-20",
+      "summary": "Refresh the frontend visual theme to use mature, rich CSS linear gradients (deep charcoal, slate, and warm amber/emerald/gold accent tones — no blue or purple) combined with glassmorphism card surfaces (backdrop-blur, semi-transparent borders, subtle inner glow), high-contrast sharp typography, and consistent neon-glow hover effects on interactive elements across all pages (landing, generate, gallery, credits, admin).",
       "acceptanceCriteria": [
-        "Admin page shows 'Replicate API Key: Configured ✓' or 'Not Configured ✗' based on hasReplicateApiKey.",
-        "A password input and Save button allow the admin to set or rotate the key.",
-        "On save success a success toast appears; on error an error toast appears.",
-        "If key is not configured, a warning banner is shown at the top of the Admin page."
+        "All page backgrounds use CSS linear gradients with deep, mature tones (no blue or purple).",
+        "Cards and modals use glassmorphism styling: backdrop-blur, semi-transparent background, subtle glowing border.",
+        "Accent colors (amber, emerald, or gold) are applied consistently to buttons, badges, and interactive elements.",
+        "Typography is sharp and high-contrast against dark gradient backgrounds.",
+        "Hover and focus states on buttons and cards display a neon-glow or gradient highlight effect.",
+        "Theme is consistent across IndexPage, GeneratePage, GalleryPage, CreditsPage, and AdminPage."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/ReplicateConfigSetup.tsx",
-          "operation": "create",
-          "description": "Create a new component to manage Replicate API key configuration. Include a query to hasReplicateApiKey to display the current status (Configured ✓ / Not Configured ✗). Provide a password-type input field and a Save button that calls setReplicateApiKey from useSetReplicateApiKey mutation. Display success or error toasts using Sonner based on mutation result. When the key is not configured, render a prominent warning banner at the top of the component prompting the admin to configure the key before media generation will work."
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Replace the existing OKLCH color tokens with a mature gradient palette using deep charcoal (#1a1a1a to #0f0f0f), slate (#2d2d2d to #1f1f1f), and accent tones in amber (oklch(0.75 0.15 75)), emerald (oklch(0.7 0.15 150)), and gold (oklch(0.8 0.15 85)). Remove all blue and purple color definitions. Add CSS utility classes for linear gradient backgrounds (e.g., .bg-gradient-dark using linear-gradient(135deg, deep charcoal, slate)). Enhance existing glassmorphism utilities with backdrop-blur-xl, semi-transparent backgrounds (rgba(255,255,255,0.05)), subtle glowing borders using box-shadow with amber/emerald/gold colors, and neon-glow hover effects. Ensure typography color tokens provide high contrast against dark gradient backgrounds."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Add two new hooks: useHasReplicateApiKey (query hook that calls actor.hasReplicateApiKey to return boolean status) and useSetReplicateApiKey (mutation hook that accepts apiKey string parameter and calls actor.setReplicateApiKey, invalidating the hasReplicateApiKey query on success). Both hooks should follow the established pattern of checking actor availability and include proper error handling."
+          "description": "Update the Tailwind color palette to remove blue and purple references. Replace cyan with amber (oklch(0.75 0.15 75)), emerald with oklch(0.7 0.15 150), and add gold (oklch(0.8 0.15 85)). Define custom gradient utilities for background-image (e.g., 'gradient-dark', 'gradient-slate') using CSS linear-gradient syntax. Add boxShadow variants for neon-glow effects (amber-glow, emerald-glow, gold-glow) using spreads and blurs. Ensure all interactive element tokens (buttons, badges, borders) reference the new mature accent palette."
+        },
+        {
+          "path": "frontend/src/pages/IndexPage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background using the new .bg-gradient-dark utility class or inline style with linear-gradient. Wrap hero sections and feature cards in glassmorphism containers using backdrop-blur, semi-transparent backgrounds, and subtle glowing borders. Replace button styling to use amber, emerald, or gold accents with neon-glow hover effects. Ensure high-contrast typography is applied to all text elements. Reference the generated hero-banner image at frontend/public/assets/generated/hero-banner.dim_1200x400.png if displayed."
+        },
+        {
+          "path": "frontend/src/pages/GeneratePage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background and glassmorphism styling to the page container and generation tabs. Update interactive elements (buttons, tabs, input fields) to use the new accent palette (amber/emerald/gold) with neon-glow hover effects. Ensure the credit balance display uses high-contrast typography and a glassmorphism card surface."
+        },
+        {
+          "path": "frontend/src/pages/GalleryPage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background to the page container. Update the GalleryCard components to use glassmorphism styling with backdrop-blur, semi-transparent backgrounds, and subtle glowing borders. Ensure the type badges and hover overlays use the new accent colors (amber/emerald/gold) with neon-glow effects. Apply high-contrast typography to all text elements."
+        },
+        {
+          "path": "frontend/src/pages/CreditsPage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background to the page container. Style the credit bundle cards with glassmorphism surfaces (backdrop-blur, semi-transparent backgrounds, glowing borders). Update buttons and interactive elements to use the new accent palette (amber/emerald/gold) with neon-glow hover effects. Ensure the current balance display uses high-contrast typography."
         },
         {
           "path": "frontend/src/pages/AdminPage.tsx",
           "operation": "modify",
-          "description": "Import and render the ReplicateConfigSetup component below the StripeConfigSetup component and above the user management table. No additional wiring is required; the component is self-contained and handles its own state and API calls."
-        }
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "summary": "Implement client-side exponential backoff retry logic in GenerationTab with retry button, attempt counter, and idempotency key",
-      "acceptanceCriteria": [
-        "After a generation error a 'Retry' button appears alongside the error message.",
-        "Clicking Retry automatically re-submits the prompt up to 3 additional times.",
-        "The status indicator shows 'Retrying… attempt N/3' during retry attempts.",
-        "The idempotency key is fixed for the duration of the retry sequence and reset when the user types a new prompt.",
-        "After 3 failed retries the status shows a final error message and the Retry button is replaced with a 'Start over' option."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/GenerationTab.tsx",
-          "operation": "modify",
-          "description": "Add retry state management to the component: introduce useState for retryCount (0-3), retryInProgress (boolean), and idempotencyKey (string derived from prompt + initial timestamp). When the generate mutation fails, display a 'Retry' button alongside the error message. Clicking Retry increments retryCount and re-invokes the mutation after exponential backoff delays (2s for attempt 1, 4s for attempt 2, 8s for attempt 3). During retry, update the status text to show 'Retrying… attempt N/3'. After 3 failed attempts, hide the Retry button and show a 'Start over' button that resets retryCount and idempotencyKey. Reset retryCount and generate a new idempotencyKey whenever the user modifies the prompt textarea. Use setTimeout for backoff delays and ensure proper cleanup in useEffect."
-        }
-      ]
-    },
-    {
-      "id": "REQ-19",
-      "summary": "Improve generation error UX by mapping typed backend error variants to specific, human-readable messages",
-      "acceptanceCriteria": [
-        "#ApiKeyMissing displays: 'Service not configured — please contact the admin.'",
-        "#ApiError displays: 'Provider returned an error — please retry.'",
-        "#Timeout displays: 'Request timed out — please try again.'",
-        "#ParseError displays: 'Unexpected response from provider — please retry.'",
-        "No error case shows the raw internal error string to the user."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/GenerationTab.tsx",
-          "operation": "modify",
-          "description": "Add a helper function mapReplicateErrorToMessage that accepts a ReplicateError variant (imported from backend.d.ts) and returns a user-friendly error message string. Map ApiKeyMissing to 'Service not configured — please contact the admin.', ApiError to 'Provider returned an error — please retry.', Timeout to 'Request timed out — please try again.', and ParseError to 'Unexpected response from provider — please retry.'. Update the error display logic to call this helper function instead of showing generic or raw error messages. Ensure the mapped message is displayed in the status indicator or error message area."
+          "description": "Apply the mature gradient background to the admin dashboard container. Update the user stats table and controls with glassmorphism styling. Use the new accent colors (amber/emerald/gold) for buttons, badges, and interactive elements with neon-glow hover effects. Ensure all typography is high-contrast against the dark gradient background."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Update useGenerateImage and useGenerateVideo mutation hooks to properly handle and propagate ReplicateError variants returned from the backend. Ensure the error object structure is preserved so that the GenerationTab component can access the error variant discriminator (__kind__) and map it to the appropriate user message. Do not flatten or stringify the error; pass it through as-is."
+          "description": "Apply the mature gradient background to the header and main layout container. Update navigation links, buttons, and the logo area with the new accent palette (amber/emerald/gold) and neon-glow hover effects. Ensure the credit display and auth controls use glassmorphism styling and high-contrast typography. Reference the app logo at frontend/public/assets/generated/app-logo.dim_256x256.png if displayed."
+        },
+        {
+          "path": "frontend/src/components/GalleryCard.tsx",
+          "operation": "modify",
+          "description": "Update the card styling to use glassmorphism surfaces with backdrop-blur, semi-transparent backgrounds, and subtle glowing borders. Replace the type badge and hover overlay colors with the new accent palette (amber/emerald/gold). Add neon-glow hover effects to the external link overlay. Ensure preview images and text use high-contrast styling."
+        },
+        {
+          "path": "frontend/src/components/GenerationTab.tsx",
+          "operation": "modify",
+          "description": "Apply glassmorphism styling to the tab container and input fields. Update buttons, status indicators, and error messages to use the new accent colors (amber/emerald/gold) with neon-glow hover effects. Ensure all typography is high-contrast against the dark gradient background."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "modify",
+          "description": "Apply glassmorphism styling to the modal dialog with backdrop-blur, semi-transparent background, and a subtle glowing border. Update the input field and buttons to use the new accent palette (amber/emerald/gold) with neon-glow hover effects. Ensure all text is high-contrast."
+        },
+        {
+          "path": "frontend/src/components/ReplicateConfigSetup.tsx",
+          "operation": "modify",
+          "description": "Apply glassmorphism styling to the config setup container. Update input fields, buttons, and status indicators to use the new accent colors (amber/emerald/gold) with neon-glow hover effects. Ensure high-contrast typography."
+        },
+        {
+          "path": "frontend/src/components/StripeConfigSetup.tsx",
+          "operation": "modify",
+          "description": "Apply glassmorphism styling to the Stripe config container. Update input fields, country list UI, and buttons to use the new accent palette (amber/emerald/gold) with neon-glow hover effects. Ensure all text is high-contrast against the dark gradient background."
+        },
+        {
+          "path": "frontend/src/components/AccessDeniedScreen.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background to the full-page container. Update the icon, message text, and back-to-home button to use high-contrast typography and the new accent colors with neon-glow hover effects."
+        },
+        {
+          "path": "frontend/src/pages/PaymentSuccessPage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background and glassmorphism styling to the success message container. Update buttons and text to use the new accent palette (amber/emerald/gold) with neon-glow hover effects and high-contrast typography."
+        },
+        {
+          "path": "frontend/src/pages/PaymentFailurePage.tsx",
+          "operation": "modify",
+          "description": "Apply the mature gradient background and glassmorphism styling to the failure message container. Update buttons and text to use the new accent colors (amber/emerald/gold) with neon-glow hover effects and high-contrast typography."
         }
       ]
     }

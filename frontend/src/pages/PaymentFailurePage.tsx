@@ -1,47 +1,49 @@
-import { useNavigate } from '@tanstack/react-router';
-import { XCircle, CreditCard, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { Link } from '@tanstack/react-router';
+import { XCircle, RefreshCw, Home, CreditCard } from 'lucide-react';
 
 export default function PaymentFailurePage() {
-  const navigate = useNavigate();
-
   return (
-    <div className="flex items-center justify-center min-h-[70vh] px-4">
-      <div className="glass-card rounded-2xl p-10 max-w-md w-full text-center space-y-6">
-        {/* Error Icon */}
-        <div className="relative mx-auto w-20 h-20">
-          <div className="w-20 h-20 rounded-full bg-destructive/10 border border-destructive/30 flex items-center justify-center mx-auto">
-            <XCircle size={36} className="text-destructive" />
-          </div>
+    <div className="bg-gradient-dark min-h-screen flex items-center justify-center px-4">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full opacity-8"
+          style={{ background: 'radial-gradient(circle, rgba(220,50,50,0.25) 0%, transparent 70%)' }} />
+      </div>
+
+      <div className="relative glass rounded-3xl p-12 max-w-md w-full text-center border border-red-500/10">
+        <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center"
+          style={{ background: 'rgba(220,50,50,0.1)', border: '1px solid rgba(220,50,50,0.2)' }}>
+          <XCircle size={40} className="text-red-400" />
         </div>
 
-        <div>
-          <h1 className="text-2xl font-bold text-destructive mb-2">Payment Failed</h1>
-          <p className="text-muted-foreground">
-            Your payment was not completed. No charges were made to your account. Please try again.
-          </p>
+        <div className="badge-amber inline-flex items-center gap-1.5 mb-4">
+          <CreditCard size={12} />
+          Payment Failed
         </div>
 
-        <div className="glass rounded-xl p-4 text-sm text-muted-foreground">
-          If you continue to experience issues, please check your payment details or contact support.
-        </div>
+        <h1 className="text-2xl font-display font-bold text-white/90 mb-3">
+          Payment <span className="text-gradient-amber">Unsuccessful</span>
+        </h1>
+        <p className="text-white/40 text-sm leading-relaxed mb-8">
+          Your payment could not be processed. No charges were made to your account. Please try again or use a different payment method.
+        </p>
 
-        <div className="flex flex-col gap-3">
-          <Button
-            onClick={() => navigate({ to: '/credits' })}
-            className="w-full btn-primary gap-2"
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            to="/credits"
+            className="btn-amber inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm shadow-glow-amber"
           >
-            <CreditCard size={16} />
+            <RefreshCw size={16} />
             Try Again
-          </Button>
-          <Button
-            onClick={() => navigate({ to: '/' })}
-            variant="outline"
-            className="w-full border-border hover:border-primary/50 gap-2"
+          </Link>
+          <Link
+            to="/"
+            className="glass inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm text-white/70 hover:text-white border border-white/10 transition-all"
           >
-            <ArrowLeft size={16} />
+            <Home size={16} />
             Back to Home
-          </Button>
+          </Link>
         </div>
       </div>
     </div>

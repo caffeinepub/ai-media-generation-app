@@ -7,10 +7,10 @@ import Text "mo:core/Text";
 import Stripe "stripe/stripe";
 import OutCall "http-outcalls/outcall";
 import Nat "mo:core/Nat";
-import Migration "migration";
+
 
 // Use migration mechanism for canister upgrades
-(with migration = Migration.run)
+
 actor {
   // Authorization
   let accessControlState = AccessControl.initState();

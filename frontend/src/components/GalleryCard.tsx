@@ -1,87 +1,110 @@
-import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Image, Video, ExternalLink, Play } from 'lucide-react';
+import React, { useState } from 'react';
+import { ExternalLink, Image, Video, Play } from 'lucide-react';
 
 interface GalleryCardProps {
   url: string;
   index: number;
 }
 
-function isVideoUrl(url: string): boolean {
-  const lower = url.toLowerCase();
-  return lower.includes('.mp4') || lower.includes('.webm') || lower.includes('.mov') || lower.includes('video');
+function looksLikeVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov|avi)(\?|$)/i.test(url) || url.includes('video');
 }
 
 export default function GalleryCard({ url, index }: GalleryCardProps) {
-  const [imageError, setImageError] = useState(false);
-  const isVideo = isVideoUrl(url);
+  const [hovered, setHovered] = useState(false);
+  const isVideo = looksLikeVideo(url);
 
   return (
-    <div className="glass-card rounded-xl overflow-hidden group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
-      {/* Media Preview */}
-      <div className="relative aspect-square bg-surface-1 overflow-hidden">
+    <div
+      className="glass rounded-2xl overflow-hidden card-hover group cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Media preview */}
+      <div className="relative aspect-square overflow-hidden bg-surface-1">
         {isVideo ? (
-          <div className="relative w-full h-full">
-            <video
-              src={url}
-              className="w-full h-full object-cover"
-              muted
-              loop
-              onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
-              onMouseLeave={(e) => { (e.target as HTMLVideoElement).pause(); (e.target as HTMLVideoElement).currentTime = 0; }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center opacity-60 group-hover:opacity-0 transition-opacity">
-              <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center">
-                <Play size={20} className="text-white ml-1" />
-              </div>
-            </div>
-          </div>
-        ) : imageError ? (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
-            <Image size={32} className="opacity-30" />
-            <span className="text-xs">Preview unavailable</span>
-          </div>
+          <video
+            src={url}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            muted
+            loop
+            playsInline
+            autoPlay={hovered}
+          />
         ) : (
           <img
             src={url}
             alt={`Generated media ${index + 1}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={() => setImageError(true)}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '';
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
           />
         )}
 
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute bottom-3 right-3">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 text-white text-xs font-medium hover:bg-black/80 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ExternalLink size={12} />
-              Open
-            </a>
-          </div>
+        {/* Hover overlay */}
+        <div className={`absolute inset-0 transition-all duration-300 flex items-center justify-center ${
+          hovered ? 'opacity-100' : 'opacity-0'
+        }`}
+          style={{ background: 'linear-gradient(to top, rgba(10,8,5,0.85) 0%, rgba(10,8,5,0.3) 60%, transparent 100%)' }}
+        >
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="glass-amber rounded-xl p-3 text-amber-400 hover:shadow-glow-amber transition-all duration-200 hover:scale-110"
+          >
+            <ExternalLink size={18} />
+          </a>
+        </div>
+
+        {/* Type badge */}
+        <div className="absolute top-3 left-3">
+          {isVideo ? (
+            <span className="badge-emerald flex items-center gap-1">
+              <Play size={10} />
+              Video
+            </span>
+          ) : (
+            <span className="badge-amber flex items-center gap-1">
+              <Image size={10} />
+              Image
+            </span>
+          )}
+        </div>
+
+        {/* Index badge */}
+        <div className="absolute top-3 right-3">
+          <span className="glass text-white/40 text-xs font-mono px-2 py-0.5 rounded-lg border border-white/[0.08]">
+            #{index + 1}
+          </span>
         </div>
       </div>
 
-      {/* Card Footer */}
-      <div className="p-3 space-y-2">
+      {/* Card footer */}
+      <div className="p-4">
         <div className="flex items-center justify-between">
-          <Badge
-            variant="outline"
-            className={`text-xs gap-1 ${isVideo ? 'border-accent/30 text-accent' : 'border-primary/30 text-primary'}`}
+          <div className="flex items-center gap-2">
+            {isVideo ? (
+              <Video size={14} className="text-emerald-400" />
+            ) : (
+              <Image size={14} className="text-amber-400" />
+            )}
+            <span className="text-white/60 text-xs font-medium">
+              {isVideo ? 'Generated Video' : 'Generated Image'}
+            </span>
+          </div>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/30 hover:text-amber-400 transition-colors"
           >
-            {isVideo ? <Video size={10} /> : <Image size={10} />}
-            {isVideo ? 'Video' : 'Image'}
-          </Badge>
-          <span className="text-xs text-muted-foreground font-mono">#{index + 1}</span>
+            <ExternalLink size={13} />
+          </a>
         </div>
-        <p className="text-xs text-muted-foreground truncate font-mono" title={url}>
-          {url.length > 50 ? url.substring(0, 50) + '...' : url}
-        </p>
       </div>
     </div>
   );

@@ -1,67 +1,100 @@
+import React, { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
 import GenerationTab from '../components/GenerationTab';
-import { useGetCredits } from '../hooks/useQueries';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Zap, Image, Video } from 'lucide-react';
+import { Image, Video, Sparkles, Infinity } from 'lucide-react';
 
 function GenerateContent() {
-  const { data: credits, isLoading: creditsLoading } = useGetCredits();
+  const [activeTab, setActiveTab] = useState<'image' | 'video'>('image');
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text mb-2">Generate Media</h1>
-        <p className="text-muted-foreground">Create AI-powered images and videos from text prompts</p>
+    <div className="bg-gradient-dark min-h-screen py-10">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full opacity-8"
+          style={{ background: 'radial-gradient(circle, rgba(255,180,50,0.25) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 rounded-full opacity-6"
+          style={{ background: 'radial-gradient(circle, rgba(80,200,120,0.2) 0%, transparent 70%)' }} />
       </div>
 
-      {/* Credit Balance Card */}
-      <div className="glass-card rounded-xl p-4 mb-6 flex items-center justify-between border-primary/20">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-primary/10">
-            <Zap size={18} className="text-primary" />
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <div className="badge-amber inline-flex items-center gap-1.5 mb-4">
+            <Sparkles size={12} />
+            AI Generation Studio
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Credit Balance</p>
-            <p className="text-xl font-bold font-mono text-primary">
-              {creditsLoading ? '...' : credits?.toString() ?? '0'}
-            </p>
+          <h1 className="text-3xl sm:text-4xl font-display font-bold text-white/90 mb-3">
+            Create <span className="text-gradient-amber">Stunning Media</span>
+          </h1>
+          <p className="text-white/50 text-base max-w-xl mx-auto">
+            Describe what you want to create and let AI bring your vision to life.
+          </p>
+        </div>
+
+        {/* Credits info */}
+        <div className="glass-gold rounded-2xl p-4 mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl glass-amber flex items-center justify-center">
+              <Sparkles size={18} className="text-amber-400" />
+            </div>
+            <div>
+              <p className="text-white/90 font-semibold text-sm">Generation Credits</p>
+              <p className="text-white/50 text-xs">No limits on your creativity</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 glass px-4 py-2 rounded-xl">
+            <Infinity size={16} className="text-amber-400" />
+            <span className="text-amber-400 font-bold text-sm">Unlimited</span>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground">Unlimited generations</p>
-          <p className="text-sm font-semibold font-mono text-foreground">∞</p>
+
+        {/* Tab selector */}
+        <div className="glass rounded-2xl p-1.5 mb-6 flex gap-1.5">
+          <button
+            onClick={() => setActiveTab('image')}
+            className={`flex-1 flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              activeTab === 'image'
+                ? 'glass-amber text-amber-400 shadow-glow-amber'
+                : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+            }`}
+          >
+            <Image size={17} />
+            Image Generation
+          </button>
+          <button
+            onClick={() => setActiveTab('video')}
+            className={`flex-1 flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              activeTab === 'video'
+                ? 'glass-emerald text-emerald-400 shadow-glow-emerald'
+                : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+            }`}
+          >
+            <Video size={17} />
+            Video Generation
+          </button>
         </div>
-      </div>
 
-      {/* Generation Tabs */}
-      <div className="glass-card rounded-2xl p-6">
-        <Tabs defaultValue="image">
-          <TabsList className="w-full mb-6 bg-surface-2 p-1 rounded-xl">
-            <TabsTrigger
-              value="image"
-              className="flex-1 gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border data-[state=active]:border-primary/30 rounded-lg"
-            >
-              <Image size={16} />
-              Image
-            </TabsTrigger>
-            <TabsTrigger
-              value="video"
-              className="flex-1 gap-2 data-[state=active]:bg-accent/10 data-[state=active]:text-accent data-[state=active]:border data-[state=active]:border-accent/30 rounded-lg"
-            >
-              <Video size={16} />
-              Video
-            </TabsTrigger>
-          </TabsList>
+        {/* Generation tab content */}
+        <div className="glass rounded-2xl p-6 sm:p-8">
+          <GenerationTab type={activeTab} />
+        </div>
 
-          <TabsContent value="image">
-            <GenerationTab mediaType="image" />
-          </TabsContent>
-
-          <TabsContent value="video">
-            <GenerationTab mediaType="video" />
-          </TabsContent>
-        </Tabs>
+        {/* Tips */}
+        <div className="mt-6 glass rounded-2xl p-5">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">💡 Prompt Tips</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { tip: 'Be specific', desc: 'Include details about style, lighting, and mood.' },
+              { tip: 'Use adjectives', desc: 'Words like "cinematic", "photorealistic", "vibrant" help.' },
+              { tip: 'Add context', desc: 'Mention the setting, time of day, or artistic style.' },
+            ].map((item, i) => (
+              <div key={i} className="glass rounded-xl p-3">
+                <p className="text-amber-400 text-xs font-semibold mb-1">{item.tip}</p>
+                <p className="text-white/40 text-xs">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

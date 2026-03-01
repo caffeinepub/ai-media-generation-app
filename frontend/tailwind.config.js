@@ -1,98 +1,111 @@
-import typography from '@tailwindcss/typography';
-import containerQueries from '@tailwindcss/container-queries';
-import animate from 'tailwindcss-animate';
-
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ['class'],
-  content: ['index.html', 'src/**/*.{js,ts,jsx,tsx,html,css}'],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
   theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px'
-      }
-    },
     extend: {
-      fontFamily: {
-        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-      },
       colors: {
-        border: 'oklch(var(--border))',
-        input: 'oklch(var(--input))',
+        border: 'oklch(var(--border) / <alpha-value>)',
+        input: 'oklch(var(--input) / <alpha-value>)',
         ring: 'oklch(var(--ring) / <alpha-value>)',
-        background: 'oklch(var(--background))',
-        foreground: 'oklch(var(--foreground))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
-          foreground: 'oklch(var(--primary-foreground))'
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: 'oklch(var(--secondary) / <alpha-value>)',
-          foreground: 'oklch(var(--secondary-foreground))'
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: 'oklch(var(--destructive) / <alpha-value>)',
-          foreground: 'oklch(var(--destructive-foreground))'
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
-          DEFAULT: 'oklch(var(--muted) / <alpha-value>)',
-          foreground: 'oklch(var(--muted-foreground) / <alpha-value>)'
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: 'oklch(var(--accent) / <alpha-value>)',
-          foreground: 'oklch(var(--accent-foreground))'
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
-          DEFAULT: 'oklch(var(--popover))',
-          foreground: 'oklch(var(--popover-foreground))'
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
-          DEFAULT: 'oklch(var(--card))',
-          foreground: 'oklch(var(--card-foreground))'
-        },
-        chart: {
-          1: 'oklch(var(--chart-1))',
-          2: 'oklch(var(--chart-2))',
-          3: 'oklch(var(--chart-3))',
-          4: 'oklch(var(--chart-4))',
-          5: 'oklch(var(--chart-5))'
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
         sidebar: {
-          DEFAULT: 'oklch(var(--sidebar))',
-          foreground: 'oklch(var(--sidebar-foreground))',
-          primary: 'oklch(var(--sidebar-primary))',
-          'primary-foreground': 'oklch(var(--sidebar-primary-foreground))',
-          accent: 'oklch(var(--sidebar-accent))',
-          'accent-foreground': 'oklch(var(--sidebar-accent-foreground))',
-          border: 'oklch(var(--sidebar-border))',
-          ring: 'oklch(var(--sidebar-ring))'
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))',
         },
-        // Custom design tokens
-        cyan: {
-          glow: 'oklch(0.82 0.18 175)',
-          dim: 'oklch(0.65 0.14 175)',
-          subtle: 'oklch(0.82 0.18 175 / 0.15)',
+        // Mature accent palette
+        amber: {
+          50:  'oklch(0.97 0.04 85)',
+          100: 'oklch(0.93 0.07 82)',
+          200: 'oklch(0.88 0.10 80)',
+          300: 'oklch(0.83 0.13 78)',
+          400: 'oklch(0.78 0.15 76)',
+          500: 'oklch(0.75 0.15 75)',
+          600: 'oklch(0.70 0.15 72)',
+          700: 'oklch(0.62 0.14 70)',
+          800: 'oklch(0.50 0.12 68)',
+          900: 'oklch(0.38 0.09 65)',
+          950: 'oklch(0.25 0.06 62)',
         },
         emerald: {
-          glow: 'oklch(0.75 0.20 160)',
-          dim: 'oklch(0.60 0.16 160)',
-          subtle: 'oklch(0.75 0.20 160 / 0.15)',
+          50:  'oklch(0.97 0.04 150)',
+          100: 'oklch(0.93 0.07 148)',
+          200: 'oklch(0.88 0.10 148)',
+          300: 'oklch(0.82 0.13 150)',
+          400: 'oklch(0.76 0.15 150)',
+          500: 'oklch(0.70 0.15 150)',
+          600: 'oklch(0.64 0.14 148)',
+          700: 'oklch(0.55 0.13 146)',
+          800: 'oklch(0.44 0.10 144)',
+          900: 'oklch(0.33 0.08 142)',
+          950: 'oklch(0.22 0.05 140)',
         },
-        amber: {
-          glow: 'oklch(0.78 0.18 75)',
-          dim: 'oklch(0.62 0.14 75)',
-          subtle: 'oklch(0.78 0.18 75 / 0.15)',
+        gold: {
+          50:  'oklch(0.97 0.04 88)',
+          100: 'oklch(0.93 0.07 87)',
+          200: 'oklch(0.89 0.10 86)',
+          300: 'oklch(0.85 0.13 86)',
+          400: 'oklch(0.82 0.15 85)',
+          500: 'oklch(0.80 0.15 85)',
+          600: 'oklch(0.74 0.14 83)',
+          700: 'oklch(0.65 0.13 81)',
+          800: 'oklch(0.52 0.10 78)',
+          900: 'oklch(0.38 0.08 75)',
+          950: 'oklch(0.24 0.05 72)',
         },
+        // Surface tokens
         surface: {
-          0: 'oklch(0.10 0.005 240)',
-          1: 'oklch(0.13 0.006 240)',
-          2: 'oklch(0.16 0.007 240)',
-          3: 'oklch(0.20 0.009 240)',
-          4: 'oklch(0.25 0.01 240)',
-        }
+          0: 'oklch(0.10 0.01 60)',
+          1: 'oklch(0.13 0.012 60)',
+          2: 'oklch(0.16 0.015 60)',
+          3: 'oklch(0.20 0.018 60)',
+          4: 'oklch(0.24 0.020 60)',
+        },
+      },
+      fontFamily: {
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -102,38 +115,60 @@ export default {
         '2xl': 'calc(var(--radius) + 8px)',
       },
       boxShadow: {
-        xs: '0 1px 2px 0 rgba(0,0,0,0.05)',
-        'glow-cyan': '0 0 20px oklch(0.82 0.18 175 / 0.3), 0 0 60px oklch(0.82 0.18 175 / 0.1)',
-        'glow-emerald': '0 0 20px oklch(0.75 0.20 160 / 0.3), 0 0 60px oklch(0.75 0.20 160 / 0.1)',
-        'glow-amber': '0 0 20px oklch(0.78 0.18 75 / 0.3), 0 0 60px oklch(0.78 0.18 75 / 0.1)',
-        'glass': '0 4px 32px oklch(0 0 0 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.05)',
-        'card-hover': '0 8px 48px oklch(0 0 0 / 0.5), 0 0 24px oklch(0.82 0.18 175 / 0.1)',
+        'glow-amber': '0 0 20px rgba(255, 180, 50, 0.35), 0 0 40px rgba(255, 180, 50, 0.15)',
+        'glow-amber-lg': '0 0 30px rgba(255, 180, 50, 0.50), 0 0 60px rgba(255, 180, 50, 0.25)',
+        'glow-emerald': '0 0 20px rgba(80, 200, 120, 0.35), 0 0 40px rgba(80, 200, 120, 0.15)',
+        'glow-emerald-lg': '0 0 30px rgba(80, 200, 120, 0.50), 0 0 60px rgba(80, 200, 120, 0.25)',
+        'glow-gold': '0 0 20px rgba(220, 180, 60, 0.35), 0 0 40px rgba(220, 180, 60, 0.15)',
+        'glow-gold-lg': '0 0 30px rgba(220, 180, 60, 0.50), 0 0 60px rgba(220, 180, 60, 0.25)',
+        'glass': '0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+        'glass-lg': '0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+        'card': '0 2px 16px rgba(0, 0, 0, 0.35)',
+        'card-hover': '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(255, 180, 50, 0.12)',
       },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
-        },
-        'glow-pulse': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' }
-        },
-        'scan-line': {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100vh)' }
-        }
+      backgroundImage: {
+        'gradient-dark': 'linear-gradient(135deg, oklch(0.10 0.01 60) 0%, oklch(0.13 0.015 55) 50%, oklch(0.11 0.01 65) 100%)',
+        'gradient-slate': 'linear-gradient(135deg, oklch(0.14 0.015 60) 0%, oklch(0.17 0.02 58) 100%)',
+        'gradient-amber': 'linear-gradient(135deg, oklch(0.75 0.15 75) 0%, oklch(0.70 0.15 70) 100%)',
+        'gradient-emerald': 'linear-gradient(135deg, oklch(0.70 0.15 150) 0%, oklch(0.65 0.15 145) 100%)',
+        'gradient-gold': 'linear-gradient(135deg, oklch(0.80 0.15 85) 0%, oklch(0.75 0.15 80) 100%)',
+        'gradient-hero': 'linear-gradient(135deg, oklch(0.10 0.01 60) 0%, oklch(0.14 0.02 58) 30%, oklch(0.12 0.015 65) 60%, oklch(0.10 0.01 60) 100%)',
+        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
-        'scan-line': 'scan-line 8s linear infinite',
-      }
-    }
+        'float': 'float 3s ease-in-out infinite',
+        'pulse-amber': 'pulse-amber 2s ease-in-out infinite',
+        'shimmer': 'shimmer 1.5s infinite',
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.4s ease-out',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        'pulse-amber': {
+          '0%, 100%': { boxShadow: '0 0 10px rgba(255, 180, 50, 0.3)' },
+          '50%': { boxShadow: '0 0 25px rgba(255, 180, 50, 0.6), 0 0 50px rgba(255, 180, 50, 0.2)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
   },
-  plugins: [typography, containerQueries, animate]
+  plugins: [
+    require('tailwindcss-animate'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/container-queries'),
+  ],
 };
